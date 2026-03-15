@@ -1,12 +1,12 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './App.css'
 import { Container } from 'react-bootstrap'
-import Izbornik from './components/izbornik'
+import Izbornik from './components/Izbornik'
 import { Route, Routes } from 'react-router-dom'
 import { RouteNames } from './constants'
 import Home from './pages/Home'
-import Cjenik from "./pages/korisnici/Cjenik";
-import Rezerviraj from './pages/korisnici/Rezerviraj'
+import Cjenik from "./pages/korisnici/Cjenik"
+import Rezerviraj from "./pages/korisnici/Rezerviraj"
 
 
 function App() {
@@ -17,8 +17,8 @@ function App() {
       <Izbornik />
       <Routes>
         <Route path={RouteNames.HOME} element={<Home />} />
-        <Route path={RouteNames.KORISNICI} element={<Cjenik />} />
-        <Route path={RouteNames.KORISNICI} element={<Rezerviraj />} />
+        <Route path={RouteNames.CJENIK} element={<Cjenik />} />
+        <Route path={RouteNames.REZERVIRAJ} element={<Rezerviraj />} />
       </Routes>
       <hr />
       &copy; Harmony Massage Studio

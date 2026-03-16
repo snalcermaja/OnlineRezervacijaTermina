@@ -5,8 +5,8 @@ import Izbornik from './components/Izbornik'
 import { Route, Routes } from 'react-router-dom'
 import { RouteNames } from './constants'
 import Home from './pages/Home'
-import Cjenik from "./pages/korisnici/Cjenik"
-import Rezerviraj from "./pages/korisnici/Rezerviraj"
+import KorisniciPregled from "./pages/korisnici/KorisniciPregled"
+
 
 
 function App() {
@@ -17,8 +17,7 @@ function App() {
       <Izbornik />
       <Routes>
         <Route path={RouteNames.HOME} element={<Home />} />
-        <Route path={RouteNames.CJENIK} element={<Cjenik />} />
-        <Route path={RouteNames.REZERVIRAJ} element={<Rezerviraj />} />
+        <Route path={RouteNames.KORISNICI} element={<KorisniciPregled />} />
       </Routes>
       <hr />
       &copy; Harmony Massage Studio

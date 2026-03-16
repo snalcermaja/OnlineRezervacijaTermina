@@ -18,14 +18,10 @@ export default function Izbornik() {
                         onClick={()=>navigate(RouteNames.HOME)}
                         >Početna</Nav.Link>
                         
-                        <NavDropdown title="Korisnici" id="basic-nav-dropdown">
+                        <NavDropdown title="Programi" id="basic-nav-dropdown">
                             <NavDropdown.Item 
-                            onClick={()=>navigate(RouteNames.CJENIK)}
-                            >Cjenik</NavDropdown.Item>
-
-                            <NavDropdown.Item 
-                            onClick={()=>navigate(RouteNames.REZERVIRAJ)}
-                            >Rezerviraj</NavDropdown.Item>
+                            onClick={()=>navigate(RouteNames.KORISNICI)}
+                            >Korisnici</NavDropdown.Item>
 
                         </NavDropdown>
                     </Nav>

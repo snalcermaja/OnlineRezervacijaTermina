@@ -1,4 +1,4 @@
-import { korisnici } from "./KoriniciPodaci"
+import { korisnici } from "./KorisniciPodaci"
 
 
 

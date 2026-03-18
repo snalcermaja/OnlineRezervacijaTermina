@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
-import KorisniciService from "../../korisnici/KorisniciService"
+import KorisniciService from "../../services/korisnici/KorisniciService"
+
 
 export default function KorisniciPregled(){
 
@@ -20,7 +21,7 @@ export default function KorisniciPregled(){
         <>
         <ul>
             {korisnici && korisnici.map((korisnik)=>(
-                <li>{korisnik.naziv}</li>
+                <li>{korisnik.ime}</li>
             ))}
         </ul>
         </>

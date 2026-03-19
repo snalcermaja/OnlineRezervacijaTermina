@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import KorisniciService from "../../services/korisnici/KorisniciService"
+import { Table } from "react-bootstrap"
 
 
 export default function KorisniciPregled(){
@@ -19,11 +20,25 @@ export default function KorisniciPregled(){
 
     return(
         <>
-        <ul>
-            {korisnici && korisnici.map((korisnik)=>(
-                <li>{korisnik.ime}</li>
-            ))}
-        </ul>
+        <Table>
+            <thead>
+                <tr>
+                    <th>Ime</th>
+                    <th>Prezime</th>
+                    <th>Broj telefona</th>
+                    <th>Akcija</th>
+                </tr>
+            </thead>
+            <tbody>
+                {korisnici && korisnici.map((korisnik)=>(
+                    <tr>
+                        <td>{korisnik.ime}</td>
+                        <td>{korisnik.prezime}</td>
+                        <td>{korisnik.brojTelefona}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </Table>
         </>
     )
 }

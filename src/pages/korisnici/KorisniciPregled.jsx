@@ -35,6 +35,7 @@ export default function KorisniciPregled(){
                         <td>{korisnik.ime}</td>
                         <td>{korisnik.prezime}</td>
                         <td>{korisnik.brojTelefona}</td>
+                        <td></td>
                     </tr>
                 ))}
             </tbody>

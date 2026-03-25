@@ -2,5 +2,6 @@ export const IME_APLIKACIJE='Online rezervacija termina'
 
 export const RouteNames = {
     HOME: '/',
-    KORISNICI: '/korisnici'
+    KORISNICI: '/korisnici',
+    KORISNICI_NOVI: '/korisnici/novi'
 }

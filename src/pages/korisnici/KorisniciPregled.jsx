@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react"
 import KorisniciService from "../../services/korisnici/KorisniciService"
-import { Table } from "react-bootstrap"
-import { Link } from "react-router-dom"
+import { Button, Table } from "react-bootstrap"
+import { Link, useNavigate } from "react-router-dom"
 import { RouteNames } from "../../constants"
+
 
 
 export default function KorisniciPregled(){
 
+    const navigate = useNavigate()
     const [korisnici, setKorisnici] = useState([])
 
     useEffect(()=>{
@@ -41,7 +43,11 @@ export default function KorisniciPregled(){
                         <td>{korisnik.ime}</td>
                         <td>{korisnik.prezime}</td>
                         <td>{korisnik.brojTelefona}</td>
-                        <td></td>
+                        <td>
+                            <Button onClick={()=>{navigate(`/korisnici/${korisnik.sifra}`)}}>
+                                Promjena
+                            </Button>
+                        </td>
                     </tr>
                 ))}
             </tbody>

@@ -6,3 +6,5 @@ export const RouteNames = {
     KORISNICI_NOVI: '/korisnici/novi',
     KORISNICI_PROMJENA: '/korisnici/:sifra'
 }
+
+export const DATA_SOURCE = 'localStorage'

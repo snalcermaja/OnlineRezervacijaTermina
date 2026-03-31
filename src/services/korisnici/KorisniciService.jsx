@@ -1,44 +1,37 @@
-import { korisnici } from "./KorisniciPodaci"
+import KorisniciServiceLocalStorage from "./KorisniciServiceLocalStorage";
+import KorisniciServiceMemorija from "./KorisniciServiceMemorija";
+import { DATA_SOURCE } from "../../constants";
+
+let Servis = null;
 
 
-async function get() {
-    return {data: [...korisnici]}
+switch (DATA_SOURCE) {
+    case 'memorija':
+        Servis = KorisniciServiceMemorija;
+        break;
+    case 'localStorage':
+        Servis = KorisniciServiceLocalStorage;
+        break;
+    default:
+        Servis = null;
 }
 
-async function getBySifra(sifra) {
-    return {data: korisnici.find(s => s.sifra === parseInt(sifra))}
-}
+
+const PrazanServis = {
+    get: async () => ({ success: false, data: []}),
+    getBySifra: async (sifra) => ({ success: false, data: {} }),
+    dodaj: async (korisnik) => { console.error("Servis nije učitan"); },
+    promjeni: async (sifra, korisnik) => { console.error("Servis nije učitan"); },
+    obrisi: async (sifra) => { console.error("Servis nije učitan"); }
+};
 
 
-async function dodaj(korisnik) {
-    if(korisnici.length>0){
-        korisnik.sifra = korisnici[korisnici.length-1].sifra + 1
-    }else{
-        korisnik.sifra = 1
+const AktivniServis = Servis || PrazanServis;
+
+export default {
+    get: () => AktivniServis.get(),
+    getBySifra: (sifra) => AktivniServis.getBySifra(sifra),
+    dodaj: (korisnik) => AktivniServis.dodaj(korisnik),
+    promjeni: (sifra, korisnik) => AktivniServis.promjeni(sifra, korisnik),
+    obrisi: (sifra) => AktivniServis.obrisi(sifra)
     }
-
-    korisnici.push(korisnik)
-}
-
-
-async function promjeni(sifra, korisnik) {
-    const index = nadiIndex(sifra)
-    korisnici[index] = {...korisnici[index], ...korisnik}
-}
-
-function nadiIndex(sifra){
-    return korisnici.findIndex(s => s.sifra === parseInt(sifra))
-}
-
-async function obrisi(sifra) {
-    const index = nadiIndex(sifra)
-    korisnici.splice(index,1)
-}
-
-export default{
-    get,
-    dodaj,
-    getBySifra,
-    promjeni,
-    obrisi
-}

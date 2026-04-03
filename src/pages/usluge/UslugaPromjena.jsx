@@ -58,7 +58,7 @@ export default function UslugaPromjena(){
             <Form.Group controlId="trajanje">
                 <Form.Label>Trajanje</Form.Label>
                 <Form.Control type="number" name="trajanje" required 
-                defaultValue={usluga.prezime} />
+                defaultValue={usluga.trajanje} />
             </Form.Group>
 
             <Form.Group controlId="cijena">

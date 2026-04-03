@@ -38,7 +38,7 @@ export default function KorisniciPregled() {
     return (
         <>
             <Link to={RouteNames.KORISNICI_NOVI}
-                className="btn btn-success w-100 mb-3 mt-3">
+                className="btn btn-outline-success w-100 mb-3 mt-3">
                 Dodavanje novog korisnika
             </Link>
             <Table>
@@ -58,11 +58,11 @@ export default function KorisniciPregled() {
                             <td>{korisnik.brojTelefona}</td>
                             <td>
                                 <Button onClick={() => { navigate(`/korisnici/${korisnik.sifra}`) }}>
-                                    Promjena
+                                    ✏️Promjena
                                 </Button>
                                 &nbsp;&nbsp;
                                 <Button variant="danger" onClick={() => { obrisi(korisnik.sifra) }}>
-                                    Obriši
+                                    🗑️Obriši
                                 </Button>
                             </td>
                         </tr>

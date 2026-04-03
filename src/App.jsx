@@ -26,6 +26,7 @@ function App() {
         <Route path={RouteNames.KORISNICI} element={<KorisniciPregled />} />
         <Route path={RouteNames.KORISNICI_NOVI} element={<KorisnikNovi />} />
         <Route path={RouteNames.KORISNICI_PROMJENA} element={<KorisnikPromjena />} />
+        
         <Route path={RouteNames.USLUGE} element={<UslugePregled />} />
         <Route path={RouteNames.USLUGE_NOVE} element={<UslugaNova />} />
         <Route path={RouteNames.USLUGE_PROMJENA} element={<UslugaPromjena />} />

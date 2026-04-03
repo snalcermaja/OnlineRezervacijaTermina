@@ -39,7 +39,7 @@ export default function UslugePregled() {
     return (
         <>
             <Link to={RouteNames.USLUGE_NOVE}
-                className="btn btn-success w-100 mb-3 mt-3">
+                className="btn btn-outline-success w-100 mb-3 mt-3">
                 Dodavanje nove usluge
             </Link>
             <Table>
@@ -69,11 +69,11 @@ export default function UslugePregled() {
                             </td>
                             <td>
                                 <Button onClick={() => { navigate(`/usluge/${usluga.sifra}`) }}>
-                                    Promjena
+                                    ✏️Promjena
                                 </Button>
                                 &nbsp;&nbsp;
                                 <Button variant="danger" onClick={() => { obrisi(usluga.sifra) }}>
-                                    Obriši
+                                    🗑️Obriši
                                 </Button>
                             </td>
                         </tr>

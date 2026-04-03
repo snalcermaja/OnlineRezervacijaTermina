@@ -28,6 +28,7 @@ export default function KorisnikNovi(){
         <h2>
             Unos novog korisnika
         </h2>
+        <hr />
 
         <Form onSubmit={odradiSubmit}>
             <Form.Group controlId="ime">

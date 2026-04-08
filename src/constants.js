@@ -5,9 +5,14 @@ export const RouteNames = {
     KORISNICI: '/korisnici',
     KORISNICI_NOVI: '/korisnici/novi',
     KORISNICI_PROMJENA: '/korisnici/:sifra',
+
     USLUGE: '/usluge',
     USLUGE_NOVE: '/usluge/nove',
-    USLUGE_PROMJENA: '/usluge/:sifra'
+    USLUGE_PROMJENA: '/usluge/:sifra',
+
+    REZERVACIJE: '/rezervacije',
+    REZERVACIJE_NOVE: '/rezervacije/nove',
+    REZERVACIJE_PROMJENA: '/rezervacije/:sifra'
 }
 
 export const DATA_SOURCE = 'localStorage'

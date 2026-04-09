@@ -3,24 +3,24 @@ import { Form, Button, Row, Col, Container, Card } from "react-bootstrap"
 import { RouteNames } from "../../constants"
 import { Link, useNavigate } from "react-router-dom"
 import RezervacijaService from "../../services/rezervacije/RezervacijaService"
-import UslugaService from "../../services/usluge/UslugeService"
+import KorisniciService from "../../services/korisnici/KorisniciService"
 
 export default function RezervacijaNova() {
 
     const navigate = useNavigate()
-    const [usluge, setUsluga] = useState([])
+    const [korisnici, setKorisnici] = useState([])
 
     useEffect(() => {
-        ucitajUsluge()
+        ucitajKorisnike()
     }, [])
 
-    async function ucitajUsluge() {
-        await UslugaService.get().then((odgovor) => {
+    async function ucitajKorisnike() {
+        await KorisniciService.get().then((odgovor) => {
             if (!odgovor.success) {
-                alert('Nije implementiran servis za usluge')
+                alert('Nije implementiran servis za korisnike')
                 return
             }
-            setUsluga(odgovor.data)
+            setKorisnici(odgovor.data)
         })
     }
 
@@ -34,34 +34,18 @@ export default function RezervacijaNova() {
         e.preventDefault()
         const podaci = new FormData(e.target)
 
-
-        if (!podaci.get('naziv') || podaci.get('naziv').trim().length === 0) {
-            alert("Naziv je obavezan i ne smije sadržavati samo razmake!");
-            return;
-        }
-
+        const odabraniKorisnik = parseInt(podaci.get('korisnik'))
+        const odabraniDatum = podaci.get('datum')
         
-        if (podaci.get('naziv').trim().length < 3) {
-            alert("Naziv rezervacije mora imati najmanje 3 znaka!");
+        if (isNaN(odabraniKorisnik) || odabraniKorisnik <= 0) {
+            alert("Odabrani korisnik nije valjan!");
             return;
-        }
 
-        
-        if (!podaci.get('usluga') || podaci.get('usluga') === "") {
-            alert("Morate odabrati uslugu!");
-            return;
-        }
-
-        
-        const odabraniUsluga = parseInt(podaci.get('usluga'));
-        if (isNaN(odabraniUsluga) || odabraniUsluga <= 0) {
-            alert("Odabrani usluga nije valjan!");
-            return;
         }
 
         dodaj({
-            naziv: podaci.get('naziv'),
-            usluga: odabraniUsluga
+            korisnik: odabraniKorisnik,
+            datum: odabraniDatum
         })
     }
 
@@ -74,43 +58,40 @@ export default function RezervacijaNova() {
                         <Card.Body>
                             <Card.Title className="mb-4">Podaci o rezervaciji</Card.Title>
 
-                            
-                            <Row>
-                                <Col xs={12}>
-                                    <Form.Group controlId="naziv" className="mb-3">
-                                        <Form.Label className="fw-bold">Naziv</Form.Label>
-                                        <Form.Control
-                                            type="text"
-                                            name="naziv"
-                                            placeholder="Unesite naziv rezervacije"
-                                            required
-                                        />
-                                    </Form.Group>
-                                </Col>
-                            </Row>
 
-                            
+
                             <Row>
                                 <Col xs={12}>
-                                    <Form.Group controlId="usluga" className="mb-3">
-                                        <Form.Label className="fw-bold">Usluga</Form.Label>
-                                        <Form.Select name="usluga" required>
-                                            <option value="">Odaberite uslugu</option>
-                                            {usluge && usluge.map((usluga) => (
-                                                <option key={usluga.sifra} value={usluga.sifra}>
-                                                    {usluga.naziv}
+                                    <Form.Group controlId="korisnik" className="mb-3">
+                                        <Form.Label className="fw-bold">Korisnik</Form.Label>
+                                        <Form.Select name="korisnik" required>
+                                            <option value="">Odaberite korisnika</option>
+                                            {korisnici && korisnici.map((korisnik) => (
+                                                <option key={korisnik.sifra} value={korisnik.sifra}>
+                                                    {korisnik.ime} 
                                                 </option>
                                             ))}
                                         </Form.Select>
+                                    </Form.Group>
+                                </Col>
+
+                                <Col md={6}>
+                                    <Form.Group controlId="datum" className="mb-3">
+                                        <Form.Label className="fw-bold">Datum</Form.Label>
+                                        <Form.Control type="datetime-local" name="datum"
+
+                                            onClick={(e) => e.target.showPicker()}
+                                            onFocus={(e) => e.target.showPicker()}
+                                        />
                                     </Form.Group>
                                 </Col>
                             </Row>
 
                             <hr />
 
-                            
+
                             <div className="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                                <Link to={RouteNames.GRUPE} className="btn btn-danger px-4">
+                                <Link to={RouteNames.REZERVACIJE} className="btn btn-danger px-4">
                                     Odustani
                                 </Link>
                                 <Button type="submit" variant="success">

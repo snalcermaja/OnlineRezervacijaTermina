@@ -1,25 +1,25 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import RezervacijaService from "../../services/rezervacije/RezervacijaService"
-import UslugeService from "../../services/usluge/UslugeService"
+import KorisniciService from "../../services/korisnici/KorisniciService"
 import { Button, Col, Form, Row, Container, Card } from "react-bootstrap"
 import { RouteNames } from "../../constants"
 
-export default function RezervacijaPromjena(){
+export default function RezervacijaPromjena() {
 
     const navigate = useNavigate()
     const params = useParams()
     const [rezervacija, setRezervacija] = useState({})
-    const [usluge, setUsluge] = useState([])
+    const [korisnici, setKorisnici] = useState([])
 
-    useEffect(()=>{
+    useEffect(() => {
         ucitajRezervaciju()
-        ucitajUsluge()
-    },[])
+        ucitajKorisnike()
+    }, [])
 
     async function ucitajRezervaciju() {
-        await RezevacijaService.getBySifra(params.sifra).then((odgovor)=>{
-            if(!odgovor.success){
+        await RezervacijaService.getBySifra(params.sifra).then((odgovor) => {
+            if (!odgovor.success) {
                 alert('Nije implementiran servis')
                 return
             }
@@ -27,59 +27,43 @@ export default function RezervacijaPromjena(){
         })
     }
 
-    async function ucitajUsluge() {
-        await UslugeService.get().then((odgovor) => {
+    async function ucitajKorisnike() {
+        await KorisniciService.get().then((odgovor) => {
             if (!odgovor.success) {
-                alert('Nije implementiran servis za usluge')
+                alert('Nije implementiran servis za korisnike')
                 return
             }
-            setUsluge(odgovor.data)
+            setKorisnici(odgovor.data)
         })
     }
 
     async function promjeni(rezervacija) {
-        await RezervacijaService.promjeni(params.sifra,rezervacija).then(()=>{
+        await RezervacijaService.promjeni(params.sifra, rezervacija).then(() => {
             navigate(RouteNames.REZERVACIJE)
         })
     }
 
-    function odradiSubmit(e){
+    function odradiSubmit(e) {
         e.preventDefault()
         const podaci = new FormData(e.target)
 
-        
-        if (!podaci.get('naziv') || podaci.get('naziv').trim().length === 0) {
-            alert("Naziv je obavezan i ne smije sadržavati samo razmake!");
-            return;
-        }
+        const odabraniKorisnik = parseInt(podaci.get('korisnik'))
+        const odabraniDatum = podaci.get('datum')
 
-        
-        if (podaci.get('naziv').trim().length < 3) {
-            alert("Naziv grupe mora imati najmanje 3 znaka!");
+        if (isNaN(odabraniKorisnik) || odabraniKorisnik <= 0) {
+            alert("Odabrani korisnik nije valjan!");
             return;
-        }
 
-        
-        if (!podaci.get('usluga') || podaci.get('usluga') === "") {
-            alert("Morate odabrati uslugu!");
-            return;
-        }
-
-        
-        const odabranaUsluga = parseInt(podaci.get('smjer'));
-        if (isNaN(odabranaUsluga) || odabranaUsluga <= 0) {
-            alert("Odabrana usluga nije valjana!");
-            return;
         }
 
         promjeni({
-            naziv: podaci.get('naziv'),
-            usluga: odabranaUsluga
+            korisnik: odabraniKorisnik,
+            datum: odabraniDatum
         })
     }
 
-    return(
-         <>
+    return (
+        <>
             <h3>Promjena rezervacije</h3>
             <Form onSubmit={odradiSubmit}>
                 <Container className="mt-4">
@@ -87,42 +71,38 @@ export default function RezervacijaPromjena(){
                         <Card.Body>
                             <Card.Title className="mb-4">Podaci o rezervaciji</Card.Title>
 
-                            
-                            <Row>
-                                <Col xs={12}>
-                                    <Form.Group controlId="naziv" className="mb-3">
-                                        <Form.Label className="fw-bold">Naziv</Form.Label>
-                                        <Form.Control
-                                            type="text"
-                                            name="naziv"
-                                            placeholder="Unesite naziv rezervacije"
-                                            required
-                                            defaultValue={rezervacija.naziv}
-                                        />
-                                    </Form.Group>
-                                </Col>
-                            </Row>
 
-                            
+
                             <Row>
                                 <Col xs={12}>
-                                    <Form.Group controlId="usluga" className="mb-3">
-                                        <Form.Label className="fw-bold">Usluga</Form.Label>
-                                        <Form.Select name="usluga" required value={rezervacija.usluga || ''} onChange={(e) => setRezervacija({...rezervacija, usluga: parseInt(e.target.value)})}>
-                                            <option value="">Odaberite uslugu</option>
-                                            {usluge && usluge.map((usluge) => (
-                                                <option key={usluge.sifra} value={usluge.sifra}>
-                                                    {usluge.naziv}
+                                    <Form.Group controlId="korisnik" className="mb-3">
+                                        <Form.Label className="fw-bold">Korisnik</Form.Label>
+                                        <Form.Select name="korisnik" required value={rezervacija.korisnik || ''} onChange={(e) => setRezervacija({ ...rezervacija, korisnik: parseInt(e.target.value) })}>
+                                            <option value="">Odaberite korisnika</option>
+                                            {korisnici && korisnici.map((korisnici) => (
+                                                <option key={korisnici.sifra} value={korisnici.sifra}>
+                                                    {korisnici.ime}
                                                 </option>
                                             ))}
                                         </Form.Select>
+                                    </Form.Group>
+                                </Col>
+
+                                <Col md={6}>
+                                    <Form.Group controlId="datum" className="mb-3">
+                                        <Form.Label className="fw-bold">Datum</Form.Label>
+                                        <Form.Control type="datetime-local" name="datum"
+
+                                            defaultValue={rezervacija.datum ? rezervacija.datum.slice(0,16):""}
+                                            onClick={(e) => e.target.showPicker()}
+                                        />
                                     </Form.Group>
                                 </Col>
                             </Row>
 
                             <hr />
 
-                            
+
                             <div className="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                                 <Link to={RouteNames.REZERVACIJE} className="btn btn-danger px-4">
                                     Odustani

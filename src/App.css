@@ -15,7 +15,7 @@ form{
     margin: 0 auto;
     padding: 20px;
 }
-.row{
+form .row{
     display: flex;
     justify-content: center;
     max-width: 450px;

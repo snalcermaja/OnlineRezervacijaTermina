@@ -9,7 +9,7 @@ async function getBySifra(sifra) {
     return {success: true, data: korisnici.find(s => s.sifra === parseInt(sifra))}
 }
 
-// 2/4 Create od CRUD
+
 async function dodaj(korisnik){
     if(korisnici.length===0){
         korisnik.sifra=1

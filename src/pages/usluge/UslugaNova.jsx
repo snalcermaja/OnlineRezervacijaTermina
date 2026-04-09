@@ -18,7 +18,6 @@ export default function UslugaNova() {
         const podaci = new FormData(e.target)
         dodaj({
             naziv: podaci.get('naziv'),
-            trajanje: podaci.get('trajanje'),
             cijena: podaci.get('cijena')
         })
     }
@@ -34,11 +33,6 @@ export default function UslugaNova() {
                 <Form.Group controlId="ime">
                     <Form.Label>Naziv</Form.Label>
                     <Form.Control type="text" name="naziv" required />
-                </Form.Group>
-
-                <Form.Group controlId="trajanje">
-                    <Form.Label>Trajanje</Form.Label>
-                    <Form.Control type="number" name="trajanje" required />
                 </Form.Group>
 
                 <Form.Group controlId="cijena">

@@ -37,7 +37,6 @@ export default function UslugaPromjena(){
         const podaci = new FormData(e.target)
         promjeni({
             naziv: podaci.get('naziv'),
-            trajanje: podaci.get('trajanje'),
             cijena: podaci.get('cijena')
         }) 
     }
@@ -53,12 +52,6 @@ export default function UslugaPromjena(){
                 <Form.Label>Naziv</Form.Label>
                 <Form.Control type="text" name="naziv" required 
                 defaultValue={usluga.naziv} />
-            </Form.Group>
-
-            <Form.Group controlId="trajanje">
-                <Form.Label>Trajanje</Form.Label>
-                <Form.Control type="number" name="trajanje" required 
-                defaultValue={usluga.trajanje} />
             </Form.Group>
 
             <Form.Group controlId="cijena">

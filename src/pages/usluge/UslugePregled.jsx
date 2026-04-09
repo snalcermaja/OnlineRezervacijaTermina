@@ -46,7 +46,6 @@ export default function UslugePregled() {
                 <thead>
                     <tr>
                         <th>Naziv</th>
-                        <th>Trajanje</th>
                         <th>Cijena</th>
                         <th>Akcija</th>
                     </tr>
@@ -55,7 +54,6 @@ export default function UslugePregled() {
                     {usluge && usluge.map((usluga) => (
                         <tr key={usluga.sifra}>
                             <td>{usluga.naziv}</td>
-                            <td>{usluga.trajanje}</td>
                             <td className="text-end">
                                 <NumericFormat
                                     value={usluga.cijena}

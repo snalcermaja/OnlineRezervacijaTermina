@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import RezervacijaService from "../../services/rezervacije/RezervacijaService"
-import UslugeService from "../../services/usluge/UslugeService"
+import KorisniciService from "../../services/korisnici/KorisniciService"
 import { Button, Table } from "react-bootstrap"
 import { Link, useNavigate } from "react-router-dom"
 import { RouteNames } from "../../constants"
@@ -10,11 +10,11 @@ export default function RezervacijaPregled(){
     const navigate = useNavigate()
 
     const [rezervacije, setRezervacije] = useState([])
-    const [usluge, setUsluge] = useState([])
+    const [korisnici, setKorisnici] = useState([])
 
     useEffect(()=>{
         ucitajRezervacije()
-        ucitajUsluge()
+        ucitajKorisnici()
     },[])
 
     async function ucitajRezervacije() {
@@ -27,13 +27,13 @@ export default function RezervacijaPregled(){
         })
     }
 
-    async function ucitajUsluge() {
-        await UslugeService.get().then((odgovor)=>{
+    async function ucitajKorisnici() {
+        await KorisniciService.get().then((odgovor)=>{
             if(!odgovor.success){
                 alert('Nije implementiran servis za korisnike')
                 return
             }
-            setUsluge(odgovor.data)
+            setKorisnici(odgovor.data)
         })
     }
 
@@ -45,30 +45,38 @@ export default function RezervacijaPregled(){
         })
     }
 
-    function dohvatiNazivUsluge(sifraUsluge) {
-        const usluga = usluge.find(s => s.sifra === sifraUsluga)
-        return usluga ? usluga.naziv : 'Nepoznata usluga'
+    function imeKorisnika(sifraKorisnici) {
+        const korisnik = korisnici.find(s => s.sifra === sifraKorisnici)
+        return korisnik ? korisnik.ime : 'Nepoznati korisnik'
     }
 
     return(
         <>
-        <Link to={RouteNames.USLUGE_NOVE}
+        <Link to={RouteNames.REZERVACIJE_NOVE}
         className="btn btn-outline-success w-100 my-3">
             Dodavanje nove rezervacije
         </Link>
         <Table striped bordered hover>
             <thead>
                 <tr>
-                    <th>Naziv</th>
-                    <th>Usluga</th>
+                    <th>Korisnik</th>
+                    <th>Datum</th>
                     <th>Akcija</th>
                 </tr>
             </thead>
             <tbody>
                 {rezervacije && rezervacije.map((rezervacija)=>(
                     <tr key={rezervacija.sifra}>
-                        <td className="lead">{rezervacija.naziv}</td>
-                        <td>{dohvatiNazivUsluge(rezervacija.usluga)}</td>
+                        <td>{imeKorisnika(rezervacija.korisnik) || 'Nema imena'}</td>
+                        <td>
+                            {rezervacija.datum ? new Date(rezervacija.datum).toLocaleString('hr-HR', {
+                                day:'2-digit',
+                                month:'2-digit',
+                                year:'numeric',
+                                hour:'2-digit',
+                                minute:'2-digit'
+                            }): 'Nema datuma'}
+                        </td>
                         <td>
                             <Button onClick={()=>{navigate(`/rezervacije/${rezervacija.sifra}`)}}>
                                 ✏️Promjeni

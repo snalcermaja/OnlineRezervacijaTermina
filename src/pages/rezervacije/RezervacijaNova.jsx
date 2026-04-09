@@ -36,7 +36,8 @@ export default function RezervacijaNova() {
 
         const odabraniKorisnik = parseInt(podaci.get('korisnik'))
         const odabraniDatum = podaci.get('datum')
-        
+        const unesenaNapomena = podaci.get('napomena')
+
         if (isNaN(odabraniKorisnik) || odabraniKorisnik <= 0) {
             alert("Odabrani korisnik nije valjan!");
             return;
@@ -45,7 +46,8 @@ export default function RezervacijaNova() {
 
         dodaj({
             korisnik: odabraniKorisnik,
-            datum: odabraniDatum
+            datum: odabraniDatum,
+            napomena: unesenaNapomena
         })
     }
 
@@ -68,7 +70,7 @@ export default function RezervacijaNova() {
                                             <option value="">Odaberite korisnika</option>
                                             {korisnici && korisnici.map((korisnik) => (
                                                 <option key={korisnik.sifra} value={korisnik.sifra}>
-                                                    {korisnik.ime} 
+                                                    {korisnik.ime}
                                                 </option>
                                             ))}
                                         </Form.Select>
@@ -81,7 +83,18 @@ export default function RezervacijaNova() {
                                         <Form.Control type="datetime-local" name="datum"
 
                                             onClick={(e) => e.target.showPicker()}
-                                            onFocus={(e) => e.target.showPicker()}
+                                        />
+                                    </Form.Group>
+                                </Col>
+
+                                <Col md={12}>
+                                    <Form.Group controlId="napomena" className="mb-3">
+                                        <Form.Label className="fw-bold">Napomena</Form.Label>
+                                        <Form.Control
+                                            as="textarea"
+                                            rows={3}
+                                            name="napomena"
+                                            placeholder="Unesite dodatne napomene..."
                                         />
                                     </Form.Group>
                                 </Col>

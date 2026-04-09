@@ -49,6 +49,7 @@ export default function RezervacijaPromjena() {
 
         const odabraniKorisnik = parseInt(podaci.get('korisnik'))
         const odabraniDatum = podaci.get('datum')
+        const unesenaNapomena = podaci.get('napomena')
 
         if (isNaN(odabraniKorisnik) || odabraniKorisnik <= 0) {
             alert("Odabrani korisnik nije valjan!");
@@ -58,7 +59,8 @@ export default function RezervacijaPromjena() {
 
         promjeni({
             korisnik: odabraniKorisnik,
-            datum: odabraniDatum
+            datum: odabraniDatum,
+            napomena: unesenaNapomena
         })
     }
 
@@ -93,8 +95,21 @@ export default function RezervacijaPromjena() {
                                         <Form.Label className="fw-bold">Datum</Form.Label>
                                         <Form.Control type="datetime-local" name="datum"
 
-                                            defaultValue={rezervacija.datum ? rezervacija.datum.slice(0,16):""}
+                                            defaultValue={rezervacija.datum ? rezervacija.datum.slice(0, 16) : ""}
                                             onClick={(e) => e.target.showPicker()}
+                                        />
+                                    </Form.Group>
+                                </Col>
+
+                                <Col md={12}>
+                                    <Form.Group controlId="napomena" className="mb-3">
+                                        <Form.Label className="fw-bold">Napomena</Form.Label>
+                                        <Form.Control
+                                            as="textarea"
+                                            rows={3}
+                                            name="napomena"
+                                            defaultValue={rezervacija.napomena}
+                                            placeholder="Unesite dodatne napomene..."
                                         />
                                     </Form.Group>
                                 </Col>

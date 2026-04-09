@@ -61,6 +61,7 @@ export default function RezervacijaPregled(){
                 <tr>
                     <th>Korisnik</th>
                     <th>Datum</th>
+                    <th>Napomena</th>
                     <th>Akcija</th>
                 </tr>
             </thead>
@@ -77,6 +78,7 @@ export default function RezervacijaPregled(){
                                 minute:'2-digit'
                             }): 'Nema datuma'}
                         </td>
+                        <td>{rezervacija.napomena || 'Bez napomene'}</td>
                         <td>
                             <Button onClick={()=>{navigate(`/rezervacije/${rezervacija.sifra}`)}}>
                                 ✏️Promjeni

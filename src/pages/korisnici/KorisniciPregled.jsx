@@ -3,6 +3,8 @@ import KorisniciService from "../../services/korisnici/KorisniciService"
 import { Button, Table } from "react-bootstrap"
 import { Link, useNavigate } from "react-router-dom"
 import { RouteNames } from "../../constants"
+import animacijaPrazno from '../../assets/prazno.json'
+import { DotLottieReact } from '@lottiefiles/dotlottie-react'
 
 
 
@@ -51,7 +53,21 @@ export default function KorisniciPregled() {
                     </tr>
                 </thead>
                 <tbody>
-                    {korisnici && korisnici.map((korisnik) => (
+                    {korisnici.length === 0 ? (
+
+                        <tr>
+                            <td colSpan="4">
+                                <div style={{ maxWidth: '200px', margin: 'auto' }}>
+                                    <DotLottieReact
+                                        data={animacijaPrazno}
+                                        loop
+                                        autoplay
+                                    />
+                                </div>
+                            </td>
+                        </tr>
+                    ) : (
+                        korisnici.map((korisnik) => (
                         <tr key={korisnik.sifra}>
                             <td>{korisnik.ime}</td>
                             <td>{korisnik.prezime}</td>
@@ -66,7 +82,8 @@ export default function KorisniciPregled() {
                                 </Button>
                             </td>
                         </tr>
-                    ))}
+                    ))
+                    )}
                 </tbody>
             </Table>
         </>

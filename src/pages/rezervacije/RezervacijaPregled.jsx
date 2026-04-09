@@ -4,22 +4,24 @@ import KorisniciService from "../../services/korisnici/KorisniciService"
 import { Button, Table } from "react-bootstrap"
 import { Link, useNavigate } from "react-router-dom"
 import { RouteNames } from "../../constants"
+import animacijaPrazno from '../../assets/prazno.json'
+import { DotLottieReact } from '@lottiefiles/dotlottie-react'
 
-export default function RezervacijaPregled(){
+export default function RezervacijaPregled() {
 
     const navigate = useNavigate()
 
     const [rezervacije, setRezervacije] = useState([])
     const [korisnici, setKorisnici] = useState([])
 
-    useEffect(()=>{
+    useEffect(() => {
         ucitajRezervacije()
         ucitajKorisnici()
-    },[])
+    }, [])
 
     async function ucitajRezervacije() {
-        await RezervacijaService.get().then((odgovor)=>{
-            if(!odgovor.success){
+        await RezervacijaService.get().then((odgovor) => {
+            if (!odgovor.success) {
                 alert('Nije implementiran servis')
                 return
             }
@@ -28,8 +30,8 @@ export default function RezervacijaPregled(){
     }
 
     async function ucitajKorisnici() {
-        await KorisniciService.get().then((odgovor)=>{
-            if(!odgovor.success){
+        await KorisniciService.get().then((odgovor) => {
+            if (!odgovor.success) {
                 alert('Nije implementiran servis za korisnike')
                 return
             }
@@ -40,7 +42,7 @@ export default function RezervacijaPregled(){
     async function brisanje(sifra) {
         if (!confirm('Sigurno obrisati?')) return;
         await RezervacijaService.obrisi(sifra);
-        await RezervacijaService.get().then((odgovor)=>{
+        await RezervacijaService.get().then((odgovor) => {
             setRezervacije(odgovor.data)
         })
     }
@@ -50,48 +52,63 @@ export default function RezervacijaPregled(){
         return korisnik ? korisnik.ime : 'Nepoznati korisnik'
     }
 
-    return(
+    return (
         <>
-        <Link to={RouteNames.REZERVACIJE_NOVE}
-        className="btn btn-outline-success w-100 my-3">
-            Dodavanje nove rezervacije
-        </Link>
-        <Table striped bordered hover>
-            <thead>
-                <tr>
-                    <th>Korisnik</th>
-                    <th>Datum</th>
-                    <th>Napomena</th>
-                    <th>Akcija</th>
-                </tr>
-            </thead>
-            <tbody>
-                {rezervacije && rezervacije.map((rezervacija)=>(
-                    <tr key={rezervacija.sifra}>
-                        <td>{imeKorisnika(rezervacija.korisnik) || 'Nema imena'}</td>
-                        <td>
-                            {rezervacija.datum ? new Date(rezervacija.datum).toLocaleString('hr-HR', {
-                                day:'2-digit',
-                                month:'2-digit',
-                                year:'numeric',
-                                hour:'2-digit',
-                                minute:'2-digit'
-                            }): 'Nema datuma'}
-                        </td>
-                        <td>{rezervacija.napomena || 'Bez napomene'}</td>
-                        <td>
-                            <Button onClick={()=>{navigate(`/rezervacije/${rezervacija.sifra}`)}}>
-                                ✏️Promjeni
-                            </Button>
-                            &nbsp;&nbsp;
-                            <Button variant="danger" onClick={() => brisanje(rezervacija.sifra)}>
-                                🗑️Obriši
-                            </Button>
-                        </td>
+            <Link to={RouteNames.REZERVACIJE_NOVE}
+                className="btn btn-outline-success w-100 my-3">
+                Dodavanje nove rezervacije
+            </Link>
+            <Table striped bordered hover>
+                <thead>
+                    <tr>
+                        <th>Korisnik</th>
+                        <th>Datum</th>
+                        <th>Napomena</th>
+                        <th>Akcija</th>
                     </tr>
-                ))}
-            </tbody>
-        </Table>
+                </thead>
+                <tbody>
+                    {rezervacije.length === 0 ? (
+
+                        <tr>
+                            <td colSpan="4">
+                                <div style={{ maxWidth: '200px', margin: 'auto' }}>
+                                    <DotLottieReact
+                                        data={animacijaPrazno}
+                                        loop
+                                        autoplay
+                                    />
+                                </div>
+                            </td>
+                        </tr>
+                    ) : (
+                        rezervacije.map((rezervacija) => (
+                            <tr key={rezervacija.sifra}>
+                                <td>{imeKorisnika(rezervacija.korisnik) || 'Nema imena'}</td>
+                                <td>
+                                    {rezervacija.datum ? new Date(rezervacija.datum).toLocaleString('hr-HR', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                    }) : 'Nema datuma'}
+                                </td>
+                                <td>{rezervacija.napomena || 'Bez napomene'}</td>
+                                <td>
+                                    <Button onClick={() => { navigate(`/rezervacije/${rezervacija.sifra}`) }}>
+                                        ✏️Promjeni
+                                    </Button>
+                                    &nbsp;&nbsp;
+                                    <Button variant="danger" onClick={() => brisanje(rezervacija.sifra)}>
+                                        🗑️Obriši
+                                    </Button>
+                                </td>
+                            </tr>
+                        ))
+                        )}
+                </tbody>
+            </Table>
         </>
     )
 }

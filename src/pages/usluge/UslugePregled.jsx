@@ -4,6 +4,8 @@ import { Button, Table } from "react-bootstrap"
 import { Link, useNavigate } from "react-router-dom"
 import { RouteNames } from "../../constants"
 import { NumericFormat } from "react-number-format"
+import animacijaPrazno from '../../assets/prazno.json'
+import { DotLottieReact } from '@lottiefiles/dotlottie-react'
 
 
 
@@ -51,7 +53,21 @@ export default function UslugePregled() {
                     </tr>
                 </thead>
                 <tbody>
-                    {usluge && usluge.map((usluga) => (
+                    {usluge.length === 0 ? (
+
+                        <tr>
+                            <td colSpan="4">
+                                <div style={{ maxWidth: '200px', margin: 'auto' }}>
+                                    <DotLottieReact
+                                        data={animacijaPrazno}
+                                        loop
+                                        autoplay
+                                    />
+                                </div>
+                            </td>
+                        </tr>
+                    ) : (
+                        usluge.map((usluga) => (
                         <tr key={usluga.sifra}>
                             <td>{usluga.naziv}</td>
                             <td className="text-end">
@@ -75,7 +91,8 @@ export default function UslugePregled() {
                                 </Button>
                             </td>
                         </tr>
-                    ))}
+                    ))
+                    )}
                 </tbody>
             </Table>
         </>

@@ -6,7 +6,7 @@ export const usluge = [
     },
     {
         sifra: 2,
-        ime: 'Masaža tijela',
+        naziv: 'Masaža tijela',
         cijena: '30'
     },
     {

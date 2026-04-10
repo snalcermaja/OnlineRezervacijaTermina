@@ -14,27 +14,33 @@ export default function Izbornik() {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link 
-                        onClick={()=>navigate(RouteNames.HOME)}
+                        <Nav.Link
+                            onClick={() => navigate(RouteNames.HOME)}
                         >Početna</Nav.Link>
-                        
+
                         <NavDropdown title="Programi" id="basic-nav-dropdown">
-                            <NavDropdown.Item 
-                            onClick={()=>navigate(RouteNames.KORISNICI)}
+                            <NavDropdown.Item
+                                onClick={() => navigate(RouteNames.KORISNICI)}
                             >Korisnici</NavDropdown.Item>
-                            
-                            <NavDropdown.Item 
-                            onClick={()=>navigate(RouteNames.USLUGE)}
+
+                            <NavDropdown.Item
+                                onClick={() => navigate(RouteNames.USLUGE)}
                             >Usluge</NavDropdown.Item>
 
-                            <NavDropdown.Item 
-                            onClick={()=>navigate(RouteNames.REZERVACIJE)}
+                            <NavDropdown.Item
+                                onClick={() => navigate(RouteNames.REZERVACIJE)}
                             >Rezervacije</NavDropdown.Item>
 
-                        </NavDropdown>
-                    </Nav>
-                </Navbar.Collapse>
-            </Container>
-        </Navbar>
+                        
+
+                        <NavDropdown.Item
+                            onClick={() => navigate(RouteNames.GENERIRANJE_PODATAKA)}
+                        >Generiraj podatke</NavDropdown.Item>
+                       </NavDropdown>
+                       
+                </Nav>
+            </Navbar.Collapse>
+        </Container>
+        </Navbar >
     )
 }

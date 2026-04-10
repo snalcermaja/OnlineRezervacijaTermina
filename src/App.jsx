@@ -16,6 +16,7 @@ import UslugaPromjena from './pages/usluge/UslugaPromjena'
 import RezervacijaPregled from './pages/rezervacije/RezervacijaPregled'
 import RezervacijaNova from './pages/rezervacije/RezervacijaNova'
 import RezervacijaPromjena from './pages/rezervacije/RezervacijaPromjena'
+import GeneriranjePodataka from './pages/GeneriranjePodataka'
 
 function App() {
 
@@ -36,6 +37,8 @@ function App() {
         <Route path={RouteNames.REZERVACIJE} element={<RezervacijaPregled />} />
         <Route path={RouteNames.REZERVACIJE_NOVE} element={<RezervacijaNova />} />
         <Route path={RouteNames.REZERVACIJE_PROMJENA} element={<RezervacijaPromjena />} />
+
+        <Route path={RouteNames.GENERIRANJE_PODATAKA} element={<GeneriranjePodataka />} />
       </Routes>
       <hr />
       &copy; Harmony Massage Studio

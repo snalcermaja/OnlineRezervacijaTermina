@@ -12,7 +12,9 @@ export const RouteNames = {
 
     REZERVACIJE: '/rezervacije',
     REZERVACIJE_NOVE: '/rezervacije/nove',
-    REZERVACIJE_PROMJENA: '/rezervacije/:sifra'
+    REZERVACIJE_PROMJENA: '/rezervacije/:sifra',
+
+    GENERIRANJE_PODATAKA: '/generiraj-podatke'
 }
 
 export const DATA_SOURCE = 'localStorage'

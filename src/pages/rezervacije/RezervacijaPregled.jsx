@@ -47,7 +47,7 @@ export default function RezervacijaPregled() {
         })
     }
 
-    function imeKorisnika(sifraKorisnici) {
+    function dohvatiImeKorisnika(sifraKorisnici) {
         const korisnik = korisnici.find(s => s.sifra === sifraKorisnici)
         return korisnik ? korisnik.ime : 'Nepoznati korisnik'
     }
@@ -64,6 +64,7 @@ export default function RezervacijaPregled() {
                         <th>Korisnik</th>
                         <th>Datum</th>
                         <th>Napomena</th>
+                        <th>Broj usluga</th>
                         <th>Akcija</th>
                     </tr>
                 </thead>
@@ -84,7 +85,7 @@ export default function RezervacijaPregled() {
                     ) : (
                         rezervacije.map((rezervacija) => (
                             <tr key={rezervacija.sifra}>
-                                <td>{imeKorisnika(rezervacija.korisnik) || 'Nema imena'}</td>
+                                <td>{dohvatiImeKorisnika(rezervacija.korisnik) || 'Nema imena'}</td>
                                 <td>
                                     {rezervacija.datum ? new Date(rezervacija.datum).toLocaleString('hr-HR', {
                                         day: '2-digit',
@@ -95,6 +96,7 @@ export default function RezervacijaPregled() {
                                     }) : 'Nema datuma'}
                                 </td>
                                 <td>{rezervacija.napomena || 'Bez napomene'}</td>
+                                <td className="text-center">{rezervacije.usluge ? rezervacije.usluge.length : 0}</td>
                                 <td>
                                     <Button onClick={() => { navigate(`/rezervacije/${rezervacija.sifra}`) }}>
                                         ✏️Promjeni

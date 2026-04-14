@@ -35,7 +35,7 @@ export default function RezervacijaPromjena() {
         }
 
         if (rezervacija.sifra) {
-        setOdabraniKorisnik(rezervacija.korisnikSifra || 0)
+        setOdabraniKorisnik(rezervacija.korisnik || 0)
         setOdabraniDatum(rezervacija.datum || '')
         setUnesenaNapomena(rezervacija.napomena || '')
     }

@@ -43,9 +43,9 @@ export default function KorisnikNovi() {
                                 <Form.Control type="text" name="prezime" required placeholder="Unesite prezime" />
                             </Form.Group>
 
-                            <Form.Group className="mb-3" controlId="brojMobitela">
-                                <Form.Label className="fw-bold">Broj mobitela</Form.Label>
-                                <Form.Control type="tel" name="brojMobitela" placeholder="09x / xxx xxxx" />
+                            <Form.Group className="mb-3" controlId="brojTelefona">
+                                <Form.Label className="fw-bold">Broj telefona</Form.Label>
+                                <Form.Control type="tel" name="brojTelefona" placeholder="09x / xxx xxxx" />
                             </Form.Group>
 
                             <hr style={{ marginTop: '30px', border: '0' }} />

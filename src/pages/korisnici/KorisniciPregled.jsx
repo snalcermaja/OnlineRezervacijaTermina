@@ -1,17 +1,18 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState} from "react"
 import KorisniciService from "../../services/korisnici/KorisniciService"
-import { Button, Table } from "react-bootstrap"
+import RezervacijaService from "../../services/rezervacije/RezervacijaService"
 import { Link, useNavigate } from "react-router-dom"
 import { RouteNames } from "../../constants"
-import animacijaPrazno from '../../assets/prazno.json'
-import { DotLottieReact } from '@lottiefiles/dotlottie-react'
-
+import useBreakpoint from "../../hooks/useBreakpoint"
+import KorisnikPregledGrid from "./KorisnikPregledGrid"
+import KorisnikPregledTablica from "./KorisnikPregledTablica"
 
 
 export default function KorisniciPregled() {
 
     const navigate = useNavigate()
-    const [korisnici, setKorisnici] = useState([])
+    const sirina = useBreakpoint()
+    const [korisnici, setKorisnici] = useState()
 
     useEffect(() => {
         ucitajKorisnike()
@@ -19,73 +20,54 @@ export default function KorisniciPregled() {
 
     async function ucitajKorisnike() {
         await KorisniciService.get().then((odgovor) => {
-            if(!odgovor.success){
+            if (!odgovor.success) {
                 alert('Nije implementiran servis')
                 return
             }
-            
+
             setKorisnici(odgovor.data)
         })
     }
 
-    async function obrisi(sifra) {
-        if (!confirm('Sigurno obrisati')) {
-            return
+    async function brisanje(sifra) {
+        if (!confirm('Sigurno obrisati?')) return
+
+        const rezervacijeRezultat = await RezervacijaService.get()
+        if (rezervacijeRezultat.success) {
+            const rezervacijeKojeKoristeKorisnik = rezervacijeRezultat.data.filter(rezervacija => rezervacija.korisnik === sifra);
+
+            if (rezervacijeKojeKoristeKorisnik.length > 0) {
+                alert(`Ne možete obrisati ovog korisnika jer je postavljen na ${rezervacijeKojeKoristeKorisnik.length} rezervacija/e. Prvo obrišite ili promijenite korisnika u toj rezervaciji.`)
+                return
+            }
         }
-        await KorisniciService.obrisi(sifra)
-        ucitajKorisnike()
+
+        await KorisniciService.obrisi(sifra);
+        await KorisniciService.get().then((odgovor) => {
+            setKorisnici(odgovor.data)
+        })
     }
 
 
     return (
         <>
             <Link to={RouteNames.KORISNICI_NOVI}
-                className="btn btn-outline-success w-100 mb-3 mt-3">
+                className="btn btn-outline-success w-100 my-3">
                 Dodavanje novog korisnika
             </Link>
-            <Table>
-                <thead>
-                    <tr>
-                        <th>Ime</th>
-                        <th>Prezime</th>
-                        <th>Broj telefona</th>
-                        <th>Akcija</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {korisnici.length === 0 ? (
-
-                        <tr>
-                            <td colSpan="4">
-                                <div style={{ maxWidth: '200px', margin: 'auto' }}>
-                                    <DotLottieReact
-                                        data={animacijaPrazno}
-                                        loop
-                                        autoplay
-                                    />
-                                </div>
-                            </td>
-                        </tr>
-                    ) : (
-                        korisnici.map((korisnik) => (
-                        <tr key={korisnik.sifra}>
-                            <td>{korisnik.ime}</td>
-                            <td>{korisnik.prezime}</td>
-                            <td>{korisnik.brojTelefona}</td>
-                            <td>
-                                <Button onClick={() => { navigate(`/korisnici/${korisnik.sifra}`) }}>
-                                    ✏️Promjena
-                                </Button>
-                                &nbsp;&nbsp;
-                                <Button variant="danger" onClick={() => { obrisi(korisnik.sifra) }}>
-                                    🗑️Obriši
-                                </Button>
-                            </td>
-                        </tr>
-                    ))
-                    )}
-                </tbody>
-            </Table>
+            {['xs', 'sm', 'md'].includes(sirina) ? (
+                <KorisnikPregledGrid
+                    korisnici={korisnici}
+                    navigate={navigate}
+                    brisanje={brisanje}
+                />
+            ) : (
+                <KorisnikPregledTablica
+                    korisnici={korisnici}
+                    navigate={navigate}
+                    brisanje={brisanje}
+                />
+            )}
         </>
     )
 }

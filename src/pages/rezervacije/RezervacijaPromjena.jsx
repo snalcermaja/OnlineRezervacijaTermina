@@ -158,7 +158,7 @@ export default function RezervacijaPromjena() {
 
                                     <Form.Group className="mb-4" controlId="korisnik">
                                         <Form.Label className="fw-bold">Korisnik</Form.Label>
-                                        <Form.Select name="korisnik" required>
+                                        <Form.Select name="korisnik" required value={rezervacija.korisnik}>
                                             <option value="">Odaberite korisnika</option>
                                             {korisnici && korisnici.map((korisnik) => (
                                                 <option key={korisnik.sifra} value={korisnik.sifra}>
@@ -171,6 +171,7 @@ export default function RezervacijaPromjena() {
                                         <Form.Group className="mb-4" controlId="datum">
                                             <Form.Label className="fw-bold">Datum</Form.Label>
                                             <Form.Control type="datetime-local" name="datum"
+                                                defaultValue={rezervacija.datum}
                                                 onClick={(e) => e.target.showPicker()}
                                             />
                                         </Form.Group>
@@ -181,7 +182,8 @@ export default function RezervacijaPromjena() {
                                                 as="textarea"
                                                 rows={3}
                                                 name="napomena"
-                                                placeholder="Unesite dodatne napomene..." />
+                                                placeholder="Unesite dodatne napomene..." 
+                                                defaultValue={rezervacija.napomena}/>
                                         </Form.Group>
                                     </Form.Group>
                                 </Card.Body>
@@ -256,6 +258,12 @@ export default function RezervacijaPromjena() {
                                                         ))}
                                                     </tbody>
                                                 </Table>
+
+                                                <div className="mt-3 border-top pt-2 text-end">
+                                                    <h4 className="fw-bold">
+                                                        Ukupno: {odabraneUsluge.reduce((suma, u) => suma + parseFloat(u.cijena), 0).toFixed(2)}€
+                                                    </h4>
+                                                </div>
                                             </div>
                                         ) : (
                                             <p className="text-muted italic">Nema odabranih usluga</p>
@@ -275,7 +283,7 @@ export default function RezervacijaPromjena() {
                             Odustani
                         </Link>
                         <Button type="submit" variant="success">
-                            Dodaj novu rezervaciju
+                            Promjeni rezervaciju
                         </Button>
                     </div>
                 </Container>

@@ -1,67 +1,69 @@
 import { Link, useNavigate } from "react-router-dom";
 import { RouteNames } from "../../constants";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import KorisniciService from "../../services/korisnici/KorisniciService";
 
-export default function KorisnikNovi(){
+export default function KorisnikNovi() {
 
     const navigate = useNavigate()
 
     async function dodaj(korisnik) {
-        await KorisniciService.dodaj(korisnik).then(()=>{
-          navigate(RouteNames.KORISNICI)
+        await KorisniciService.dodaj(korisnik).then(() => {
+            navigate(RouteNames.KORISNICI)
         })
     }
 
-    function odradiSubmit(e){
+    function odradiSubmit(e) {
         e.preventDefault()
         const podaci = new FormData(e.target)
         dodaj({
             ime: podaci.get('ime'),
             prezime: podaci.get('prezime'),
             brojTelefona: podaci.get('brojTelefona')
-        }) 
+        })
     }
 
-    return(
+    return (
         <>
-        <h2>
-            Unos novog korisnika
-        </h2>
-        <hr />
+            <Container className="mt-4">
+                <h2>Unos novog korisnika</h2>
+                <hr />
 
-        <Form onSubmit={odradiSubmit}>
-            <Form.Group controlId="ime">
-                <Form.Label>Ime</Form.Label>
-                <Form.Control type="text" name="ime" required />
-            </Form.Group>
+                <Row className="justify-content-center mt-4">
+                    <Col md={6}> 
+                        <Form onSubmit={odradiSubmit}>
 
-            <Form.Group controlId="prezime">
-                <Form.Label>Prezime</Form.Label>
-                <Form.Control type="text" name="prezime" required />
-            </Form.Group>
+                            <Form.Group className="mb-3" controlId="ime">
+                                <Form.Label className="fw-bold">Ime</Form.Label>
+                                <Form.Control type="text" name="ime" required placeholder="Unesite ime" />
+                            </Form.Group>
 
-            <Form.Group controlId="brojTelefona">
-                <Form.Label>Broj telefona</Form.Label>
-                <Form.Control type="tel" name="brojTelefona" required />
-            </Form.Group>
+                            <Form.Group className="mb-3" controlId="prezime">
+                                <Form.Label className="fw-bold">Prezime</Form.Label>
+                                <Form.Control type="text" name="prezime" required placeholder="Unesite prezime" />
+                            </Form.Group>
 
-            <hr style={{marginTop: '50px',border: '0'}}/>
+                            <Form.Group className="mb-3" controlId="brojMobitela">
+                                <Form.Label className="fw-bold">Broj mobitela</Form.Label>
+                                <Form.Control type="tel" name="brojMobitela" placeholder="09x / xxx xxxx" />
+                            </Form.Group>
 
-            <Row>
-                <Col>
-                    <Link to={RouteNames.KORISNICI} className="btn btn-danger">
-                    Odustani
-                    </Link>
-                </Col>
+                            <hr style={{ marginTop: '30px', border: '0' }} />
 
-                <Col>
-                    <Button type="submit" variant="success">
-                        Dodaj korisnika
-                    </Button>
-                </Col>
-            </Row>
-        </Form>
+                            <div className="d-flex justify-content-between mb-5">
+                                <Link to={RouteNames.KORISNICI} className="btn btn-danger px-4">
+                                    Odustani
+                                </Link>
+                                <Button type="submit" variant="success" className="px-4">
+                                    Dodaj korisnika
+                                </Button>
+                            </div>
+
+                        </Form>
+                    </Col>
+                </Row>
+            </Container>
+            )
         </>
     )
 }

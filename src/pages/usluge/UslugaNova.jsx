@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { RouteNames } from "../../constants";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import UslugeService from "../../services/usluge/UslugeService";
 
 export default function UslugaNova() {
@@ -24,38 +24,37 @@ export default function UslugaNova() {
 
     return (
         <>
-            <h2>
-                Unos nove usluge
-            </h2>
-            <hr />
+            <Container className="mt-4">
+                <h2>Unos nove usluge</h2>
+                <hr />
 
-            <Form onSubmit={odradiSubmit}>
-                <Form.Group controlId="ime">
-                    <Form.Label>Naziv</Form.Label>
-                    <Form.Control type="text" name="naziv" required />
-                </Form.Group>
+                <Row className="justify-content-center mt-5">
+                    <Col md={6}>
+                        <Form onSubmit={odradiSubmit}>
+                            <Form.Group className="mb-3" controlId="ime">
+                                <Form.Label className="fw-bold">Naziv</Form.Label>
+                                <Form.Control type="text" name="naziv" required placeholder="Unesite naziv usluge" />
+                            </Form.Group>
 
-                <Form.Group controlId="cijena">
-                    <Form.Label>Cijena</Form.Label>
-                    <Form.Control type="number" name="cijena" required />
-                </Form.Group>
+                            <Form.Group className="mb-3" controlId="cijena">
+                                <Form.Label className="fw-bold">Cijena</Form.Label>
+                                <Form.Control type="number" name="cijena" required placeholder="0.00" />
+                            </Form.Group>
 
-                <hr style={{ marginTop: '50px', border: '0' }} />
+                            <hr style={{ marginTop: '30px', marginBottom: '30px', border: '0' }} />
 
-                <Row>
-                    <Col>
-                        <Link to={RouteNames.USLUGE} className="btn btn-danger">
-                            Odustani
-                        </Link>
-                    </Col>
-
-                    <Col>
-                        <Button type="submit" variant="success">
-                            Dodaj uslugu
-                        </Button>
+                            <div className="d-flex justify-content-between">
+                                <Link to={RouteNames.USLUGE} className="btn btn-danger px-4">
+                                    Odustani
+                                </Link>
+                                <Button type="submit" variant="success" className="px-4">
+                                    Dodaj uslugu
+                                </Button>
+                            </div>
+                        </Form>
                     </Col>
                 </Row>
-            </Form>
+            </Container>
         </>
     )
 }

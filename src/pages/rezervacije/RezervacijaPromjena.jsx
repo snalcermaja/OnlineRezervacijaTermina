@@ -35,10 +35,10 @@ export default function RezervacijaPromjena() {
         }
 
         if (rezervacija.sifra) {
-        setOdabraniKorisnik(rezervacija.korisnik || 0)
-        setOdabraniDatum(rezervacija.datum || '')
-        setUnesenaNapomena(rezervacija.napomena || '')
-    }
+            setOdabraniKorisnik(rezervacija.korisnik || 0)
+            setOdabraniDatum(rezervacija.datum || '')
+            setUnesenaNapomena(rezervacija.napomena || '')
+        }
     }, [rezervacija, usluge])
 
     async function ucitajRezervaciju() {
@@ -88,7 +88,7 @@ export default function RezervacijaPromjena() {
         if (!pretragaUsluga) return []
         return usluge.filter(p =>
             !odabraneUsluge.find(op => op.sifra === p.sifra) &&
-            (p.ime.toLowerCase().includes(pretragaUsluga.toLowerCase()))
+            (p.naziv.toLowerCase().includes(pretragaUsluga.toLowerCase()))
         )
     }
 
@@ -121,8 +121,10 @@ export default function RezervacijaPromjena() {
     function odradiSubmit(e) {
         e.preventDefault();
 
-        const podaci = new FormData(e.target);
-        const korisnikRaw = podaci.get('korisnik');
+        const podaci = new FormData(e.target)
+        const korisnikRaw = podaci.get('korisnik')
+        const odabraniDatum = podaci.get('datum')
+        const unesenaNapomena = podaci.get('napomena')
 
         if (!korisnikRaw || korisnikRaw === "") {
             alert("Morate odabrati korisnika!");
@@ -139,7 +141,7 @@ export default function RezervacijaPromjena() {
             korisnik: odabraniKorisnik,
             datum: odabraniDatum,
             napomena: unesenaNapomena,
-            usluga: unesenaUsluga.map(p => p.sifra)
+            usluge: odabraneUsluge.map(p => p.sifra)
         });
     }
 
@@ -147,17 +149,16 @@ export default function RezervacijaPromjena() {
         <>
             <h3>Promjena rezervacije</h3>
             <Form onSubmit={odradiSubmit}>
-                <Container className="mt-4">
-                    <Row>
+                <Container fluid className="mt-4 px-4">
+                    <Row className="g-4">
                         <Col md={6}>
-                            <Card className="shadow-sm">
-                                <Card.Body>
-                                    <Card.Title className="mb-4">Podaci o rezervaciji</Card.Title>
+                            <Card className="shadow-sm h-100">
+                                <Card.Body className="p-4">
+                                    <Card.Title className="mb-4 text-primary">Podaci o rezervaciji</Card.Title>
 
-                                    <Form.Group controlId="korisnik" className="mb-3">
+                                    <Form.Group className="mb-4" controlId="korisnik">
                                         <Form.Label className="fw-bold">Korisnik</Form.Label>
-                                        <Form.Select name="korisnik" required value={odabraniKorisnik}
-                                        onChange={(e) => setOdabraniKorisnik(e.target.value)}>
+                                        <Form.Select name="korisnik" required>
                                             <option value="">Odaberite korisnika</option>
                                             {korisnici && korisnici.map((korisnik) => (
                                                 <option key={korisnik.sifra} value={korisnik.sifra}>
@@ -165,35 +166,32 @@ export default function RezervacijaPromjena() {
                                                 </option>
                                             ))}
                                         </Form.Select>
+
+
+                                        <Form.Group className="mb-4" controlId="datum">
+                                            <Form.Label className="fw-bold">Datum</Form.Label>
+                                            <Form.Control type="datetime-local" name="datum"
+                                                onClick={(e) => e.target.showPicker()}
+                                            />
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-0" controlId="napomena">
+                                            <Form.Label className="fw-bold">Napomena</Form.Label>
+                                            <Form.Control
+                                                as="textarea"
+                                                rows={3}
+                                                name="napomena"
+                                                placeholder="Unesite dodatne napomene..." />
+                                        </Form.Group>
                                     </Form.Group>
                                 </Card.Body>
                             </Card>
-
-                            <Form.Group controlId="datum" className="mb-3">
-                                <Form.Label className="fw-bold">Datum</Form.Label>
-                                <Form.Control type="datetime-local" name="datum"
-                                    value={odabraniDatum}
-                                    onClick={(e) => e.target.showPicker()}
-                                />
-                            </Form.Group>
-
-                            <Form.Group controlId="napomena" className="mb-3">
-                                <Form.Label className="fw-bold">Napomena</Form.Label>
-                                <Form.Control
-                                    as="textarea"
-                                    rows={3}
-                                    name="napomena"
-                                    placeholder="Unesite dodatne napomene..." 
-                                    value={unesenaNapomena}/>
-                            </Form.Group>
                         </Col>
 
-
-
                         <Col md={6}>
-                            <Card className="shadow-sm">
-                                <Card.Body>
-                                    <Card.Title className="mb-4">Usluge</Card.Title>
+                            <Card className="shadow-sm h-100">
+                                <Card.Body className="p-4">
+                                    <Card.Title className="mb-4 text-primary">Usluge</Card.Title>
 
                                     <Form.Group className="mb-3 position-relative">
                                         <Form.Label className="fw-bold">Dodaj uslugu</Form.Label>
@@ -225,61 +223,62 @@ export default function RezervacijaPromjena() {
                                                             setOdabraniIndex(index)
                                                         }}
                                                     >
-                                                        {usluga.naziv}
+                                                        {usluga.naziv}-{usluga.cijena}{'€'}
                                                     </div>
                                                 ))}
                                             </div>
                                         )}
                                     </Form.Group>
-
-                                    {odabraneUsluge.length > 0 && (
-                                        <div style={{ overflow: 'auto', maxHeight: '300px' }}>
-                                            <Table striped bordered hover size="sm">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Naziv</th>
-                                                        <th style={{ width: '80px' }}>Akcija</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {odabraneUsluge.map(usluga => (
-                                                        <tr key={usluga.sifra}>
-                                                            <td>{usluga.naziv}</td>
-                                                            <td>
-                                                                <Button
-                                                                    variant="danger"
-                                                                    size="sm"
-                                                                    onClick={() => ukloniUslugu(usluga.sifra)}
-                                                                >
-                                                                    Obriši
-                                                                </Button>
-                                                            </td>
+                                    <div className="mt-4">
+                                        {odabraneUsluge.length > 0 ? (
+                                            <div style={{ overflow: 'auto', maxHeight: '300px' }}>
+                                                <Table striped bordered hover size="sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Naziv</th>
+                                                            <th style={{ width: '80px' }}>Akcija</th>
                                                         </tr>
-                                                    ))}
-                                                </tbody>
-                                            </Table>
-                                        </div>
-
-                                    )}
-                                    {odabraneUsluge.length === 0 && (
-                                        <p className="text-muted">Nema odabranih usluga</p>
-                                    )}
+                                                    </thead>
+                                                    <tbody>
+                                                        {odabraneUsluge.map(usluga => (
+                                                            <tr key={usluga.sifra}>
+                                                                <td>{usluga.naziv}-{usluga.cijena}{'€'}</td>
+                                                                <td>
+                                                                    <Button
+                                                                        variant="danger"
+                                                                        size="sm"
+                                                                        onClick={() => ukloniUslugu(usluga.sifra)}
+                                                                    >
+                                                                        Obriši
+                                                                    </Button>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </Table>
+                                            </div>
+                                        ) : (
+                                            <p className="text-muted italic">Nema odabranih usluga</p>
+                                        )}
+                                    </div>
                                 </Card.Body>
                             </Card>
                         </Col>
                     </Row>
-                    <hr />
 
+
+
+                    <hr />
 
                     <div className="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                         <Link to={RouteNames.REZERVACIJE} className="btn btn-danger px-4">
                             Odustani
                         </Link>
                         <Button type="submit" variant="success">
-                            Promjeni rezervaciju
+                            Dodaj novu rezervaciju
                         </Button>
                     </div>
-                </Container >
+                </Container>
             </Form >
         </>
     )

@@ -96,7 +96,7 @@ export default function RezervacijaPregled() {
                                     }) : 'Nema datuma'}
                                 </td>
                                 <td>{rezervacija.napomena || 'Bez napomene'}</td>
-                                <td className="text-center">{rezervacije.usluge ? rezervacije.usluge.length : 0}</td>
+                                <td className="text-center">{rezervacija.usluge ? rezervacija.usluge.length : 0}</td>
                                 <td>
                                     <Button onClick={() => { navigate(`/rezervacije/${rezervacija.sifra}`) }}>
                                         ✏️Promjeni

@@ -188,7 +188,10 @@ export default function RezervacijaNova() {
                                                             setOdabraniIndex(index)
                                                         }}
                                                     >
-                                                        {usluga.naziv}-{usluga.cijena}{'€'}
+                                                        <span>{usluga.naziv}</span>
+                                                        <span style={{fontWeight: 'bold', marginLeft:'10px'}}>
+                                                            {Number(usluga.cijena).toLocaleString('hr-HR', {minimumFractionDigits: 2})} €
+                                                        </span>
                                                     </div>
                                                 ))}
                                             </div>
@@ -201,13 +204,15 @@ export default function RezervacijaNova() {
                                                     <thead>
                                                         <tr>
                                                             <th>Naziv</th>
+                                                            <th>Cijena</th>
                                                             <th style={{ width: '80px' }}>Akcija</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         {odabraneUsluge.map(usluga => (
                                                             <tr key={usluga.sifra}>
-                                                                <td>{usluga.naziv}-{usluga.cijena}{'€'}</td>
+                                                                <td>{usluga.naziv}</td>
+                                                                <td>{Number(usluga.cijena).toLocaleString('hr-Hr',{minimumFractionDigits: 2})}€</td>
                                                                 <td>
                                                                     <Button
                                                                         variant="danger"

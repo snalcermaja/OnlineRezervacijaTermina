@@ -49,7 +49,7 @@ export default function RezervacijaPregled() {
 
     function dohvatiImeKorisnika(sifraKorisnici) {
         const korisnik = korisnici.find(s => s.sifra === sifraKorisnici)
-        return korisnik ? korisnik.ime : 'Nepoznati korisnik'
+        return korisnik ? `${korisnik.ime} ${korisnik.prezime}` : 'Nepoznati korisnik'
     }
 
     function dohvatiBrojUsluga(rezervacija) {

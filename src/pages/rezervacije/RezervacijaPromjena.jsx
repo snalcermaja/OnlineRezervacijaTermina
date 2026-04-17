@@ -29,16 +29,19 @@ export default function RezervacijaPromjena() {
     }, [])
 
     useEffect(() => {
-        if (rezervacija.usluge && usluge.length > 0) {
-            const odabrani = usluge.filter(p => rezervacija.usluge.includes(p.sifra))
-            setOdabraneUsluge(odabrani)
+    if (rezervacija && rezervacija.sifra) {
+        
+        setOdabraniKorisnik(rezervacija.korisniksifra || 0)
+        setUnesenaNapomena(rezervacija.napomena || '')
+
+        if (rezervacija.datum) {
+            setOdabraniDatum(rezervacija.datum.substring(0, 16))
         }
 
-        if (rezervacija.sifra) {
-            setOdabraniKorisnik(rezervacija.korisnik || 0)
-            setOdabraniDatum(rezervacija.datum || '')
-            setUnesenaNapomena(rezervacija.napomena || '')
+        if (rezervacija.usluge) {
+            setOdabraneUsluge(rezervacija.usluge)
         }
+    }
     }, [rezervacija, usluge])
 
     async function ucitajRezervaciju() {
@@ -171,7 +174,8 @@ export default function RezervacijaPromjena() {
                                         <Form.Group className="mb-4" controlId="datum">
                                             <Form.Label className="fw-bold">Datum</Form.Label>
                                             <Form.Control type="datetime-local" name="datum"
-                                                defaultValue={rezervacija.datum}
+                                                value={odabraniDatum}
+                                                onChange={(e) => setOdabraniDatum(e.target.value)}
                                                 onClick={(e) => e.target.showPicker()}
                                             />
                                         </Form.Group>

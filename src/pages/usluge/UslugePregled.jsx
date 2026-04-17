@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react"
 import UslugeService from "../../services/usluge/UslugeService"
-import { Button, Table } from "react-bootstrap"
+import RezervacijaService from "../../services/rezervacije/RezervacijaService"
 import { Link, useNavigate } from "react-router-dom"
 import { RouteNames } from "../../constants"
-import { NumericFormat } from "react-number-format"
-import animacijaPrazno from '../../assets/prazno.json'
-import { DotLottieReact } from '@lottiefiles/dotlottie-react'
-
+import useBreakpoint from "../../hooks/useBreakpoint"
+import UslugaPregledGrid from "./UslugaPregledGrid"
+import UslugaPregledTablica from "./UslugaPregledTablica"
 
 
 export default function UslugePregled() {
 
     const navigate = useNavigate()
+    const sirina = useBreakpoint()
     const [usluge, setUsluge] = useState([])
 
     useEffect(() => {
@@ -29,12 +29,23 @@ export default function UslugePregled() {
         })
     }
 
-    async function obrisi(sifra) {
-        if (!confirm('Sigurno obrisati')) {
-            return
+    async function brisanje(sifra) {
+        if (!confirm('Sigurno obrisati?')) return
+
+        const rezervacijeRezultat = await RezervacijaService.get()
+        if (rezervacijeRezultat.success) {
+            const rezervacijeKojeKoristeUsluge = rezervacijeRezultat.data.filter(rezervacija => rezervacija.usluga === sifra);
+
+            if (rezervacijeKojeKoristeUsluge.length > 0) {
+                alert(`Ne možete obrisati ove usluge jer je postavljen na ${rezervacijeKojeKoristeUsluge.length} rezervacija/e. Prvo obrišite ili promijenite uslugu u toj rezervaciji.`)
+                return
+            }
         }
+
         await UslugeService.obrisi(sifra)
-        ucitajUsluge()
+        await UslugeService.get().then((odgovor) => {
+            setUsluge(odgovor.data)
+        })
     }
 
 
@@ -44,57 +55,19 @@ export default function UslugePregled() {
                 className="btn btn-outline-success w-100 mb-3 mt-3">
                 Dodavanje nove usluge
             </Link>
-            <Table>
-                <thead>
-                    <tr>
-                        <th>Naziv</th>
-                        <th>Cijena</th>
-                        <th>Akcija</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {usluge.length === 0 ? (
-
-                        <tr>
-                            <td colSpan="4">
-                                <div style={{ maxWidth: '200px', margin: 'auto' }}>
-                                    <DotLottieReact
-                                        data={animacijaPrazno}
-                                        loop
-                                        autoplay
-                                    />
-                                </div>
-                            </td>
-                        </tr>
-                    ) : (
-                        usluge.map((usluga) => (
-                        <tr key={usluga.sifra}>
-                            <td>{usluga.naziv}</td>
-                            <td className="text-end">
-                                <NumericFormat
-                                    value={usluga.cijena}
-                                    displayType={'text'}
-                                    thousandSeparator='.'
-                                    decimalSeparator=','
-                                    suffix={' €'}
-                                    decimalScale={2}
-                                    fixedDecimalScale
-                                />
-                            </td>
-                            <td>
-                                <Button onClick={() => { navigate(`/usluge/${usluga.sifra}`) }}>
-                                    ✏️Promjena
-                                </Button>
-                                &nbsp;&nbsp;
-                                <Button variant="danger" onClick={() => { obrisi(usluga.sifra) }}>
-                                    🗑️Obriši
-                                </Button>
-                            </td>
-                        </tr>
-                    ))
-                    )}
-                </tbody>
-            </Table>
+            {['xs', 'sm', 'md'].includes(sirina) ? (
+                <UslugaPregledGrid
+                    usluge={usluge}
+                    navigate={navigate}
+                    brisanje={brisanje}
+                />
+            ) : (
+                <UslugaPregledTablica
+                    usluge={usluge}
+                    navigate={navigate}
+                    brisanje={brisanje}
+                />
+            )}
         </>
     )
 }

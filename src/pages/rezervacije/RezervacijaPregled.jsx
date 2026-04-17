@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react"
 import RezervacijaService from "../../services/rezervacije/RezervacijaService"
 import KorisniciService from "../../services/korisnici/KorisniciService"
-import { Button, Table } from "react-bootstrap"
 import { Link, useNavigate } from "react-router-dom"
 import { RouteNames } from "../../constants"
-import animacijaPrazno from '../../assets/prazno.json'
-import { DotLottieReact } from '@lottiefiles/dotlottie-react'
+import useBreakpoint from "../../hooks/useBreakpoint"
+import RezervacijaPregledGrid from "./RezervacijaPregledGrid"
+import RezervacijaPregledTablica from "./RezervacijaPregledTablica"
 
 export default function RezervacijaPregled() {
 
     const navigate = useNavigate()
-
+    const sirina = useBreakpoint()
     const [rezervacije, setRezervacije] = useState([])
     const [korisnici, setKorisnici] = useState([])
 
@@ -52,65 +52,33 @@ export default function RezervacijaPregled() {
         return korisnik ? korisnik.ime : 'Nepoznati korisnik'
     }
 
+    function dohvatiBrojUsluga(rezervacija) {
+        return rezervacija.usluge ? rezervacija.usluge.length : 0
+    }
+
     return (
         <>
             <Link to={RouteNames.REZERVACIJE_NOVE}
                 className="btn btn-outline-success w-100 my-3">
                 Dodavanje nove rezervacije
             </Link>
-            <Table striped bordered hover>
-                <thead>
-                    <tr>
-                        <th>Korisnik</th>
-                        <th>Datum</th>
-                        <th>Napomena</th>
-                        <th>Broj usluga</th>
-                        <th>Akcija</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {rezervacije.length === 0 ? (
-
-                        <tr>
-                            <td colSpan="4">
-                                <div style={{ maxWidth: '200px', margin: 'auto' }}>
-                                    <DotLottieReact
-                                        data={animacijaPrazno}
-                                        loop
-                                        autoplay
-                                    />
-                                </div>
-                            </td>
-                        </tr>
-                    ) : (
-                        rezervacije.map((rezervacija) => (
-                            <tr key={rezervacija.sifra}>
-                                <td>{dohvatiImeKorisnika(rezervacija.korisnik) || 'Nema imena'}</td>
-                                <td>
-                                    {rezervacija.datum ? new Date(rezervacija.datum).toLocaleString('hr-HR', {
-                                        day: '2-digit',
-                                        month: '2-digit',
-                                        year: 'numeric',
-                                        hour: '2-digit',
-                                        minute: '2-digit'
-                                    }) : 'Nema datuma'}
-                                </td>
-                                <td>{rezervacija.napomena || 'Bez napomene'}</td>
-                                <td className="text-center">{rezervacija.usluge ? rezervacija.usluge.length : 0}</td>
-                                <td>
-                                    <Button onClick={() => { navigate(`/rezervacije/${rezervacija.sifra}`) }}>
-                                        ✏️Promjeni
-                                    </Button>
-                                    &nbsp;&nbsp;
-                                    <Button variant="danger" onClick={() => brisanje(rezervacija.sifra)}>
-                                        🗑️Obriši
-                                    </Button>
-                                </td>
-                            </tr>
-                        ))
-                        )}
-                </tbody>
-            </Table>
+            {['xs', 'sm', 'md'].includes(sirina) ? (
+                <RezervacijaPregledGrid
+                    rezervacije={rezervacije}
+                    navigate={navigate}
+                    brisanje={brisanje}
+                    dohvatiImeKorisnika={dohvatiImeKorisnika}
+                    dohvatiBrojUsluga={dohvatiBrojUsluga}
+                />
+            ) : (
+                <RezervacijaPregledTablica
+                    rezervacije={rezervacije}
+                    navigate={navigate}
+                    brisanje={brisanje}
+                    dohvatiImeKorisnika={dohvatiImeKorisnika}
+                    dohvatiBrojUsluga={dohvatiBrojUsluga}
+                />
+            )}
         </>
     )
 }

@@ -229,7 +229,7 @@ export default function RezervacijaNova() {
 
                                                 <div className="mt-3 border-top pt-2 text-end">
                                                     <h4 className="fw-bold">
-                                                        Ukupno: {odabraneUsluge.reduce((suma, u) => suma + parseFloat(u.cijena), 0).toFixed(2)}€
+                                                        Ukupno: {odabraneUsluge.reduce((suma, usluge) => suma + parseFloat(usluge.cijena), 0).toFixed(2)}€
                                                     </h4>
                                                 </div>
                                             </div>

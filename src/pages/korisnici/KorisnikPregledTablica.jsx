@@ -1,5 +1,4 @@
 import { Button, Table } from "react-bootstrap"
-import { korisnici } from "../../services/korisnici/KorisniciPodaci"
 
 export default function KorisniciPregledTablica({ korisnici, navigate, brisanje }) {
 
@@ -31,11 +30,11 @@ export default function KorisniciPregledTablica({ korisnici, navigate, brisanje 
 
                             <td className="text-center">
                                 <Button onClick={() => navigate(`/korisnici/${korisnik.sifra}`)}>
-                                    Promjeni
+                                    ✏️Promjeni
                                 </Button>
                                 &nbsp;&nbsp;
                                 <Button variant="danger" onClick={() => brisanje(korisnik.sifra)}>
-                                    Obriši
+                                    🗑️Obriši
                                 </Button>
                             </td>
                         </tr>

@@ -4,6 +4,7 @@ import { Faker, hr, en } from '@faker-js/faker';
 import KorisniciService from '../services/korisnici/KorisniciService';
 import UslugeService from '../services/usluge/UslugeService';
 import RezervacijaService from '../services/rezervacije/RezervacijaService';
+import { usluge } from '../services/usluge/UslugePodaci';
 
 
 export default function GeneriranjePodataka() {
@@ -52,6 +53,9 @@ export default function GeneriranjePodataka() {
         const rezultatKorisnici = await KorisniciService.get();
         const korisnici = rezultatKorisnici.data;
 
+        const rezultatUsluge = await UslugeService.get()
+        const sveUsluge = rezultatUsluge.data
+
         
         if (korisnici.length === 0) {
             throw new Error('Nema dostupnih korisnika. Prvo generirajte korisnike.');
@@ -59,12 +63,17 @@ export default function GeneriranjePodataka() {
         
         for (let i = 0; i < broj; i++) {
             const randomKorisnik = korisnici[faker.number.int({ min: 0, max: korisnici.length - 1 })];
+            const nasumicneUsluge = []
+            if (sveUsluge.length > 0){
+                nasumicneUsluge.push(sveUsluge[0])
+            }
   
             const rezervacije = {
                 ime: randomKorisnik.ime.trim().split(/\s+/).slice(0, 2).map(rijec => rijec[0]).join('').toUpperCase(),   
                 korisnik: randomKorisnik.sifra,
-                datum: faker.date.soon().toISOString().split('T')[0],
-                napomena: faker.lorem.sentence()
+                datum: faker.date.soon().toISOString(),
+                napomena: faker.lorem.sentence(),
+                usluge: nasumicneUsluge
             };
             
             await RezervacijaService.dodaj(rezervacije);

@@ -38,7 +38,7 @@ export default function UslugaNova() {
 
                             <Form.Group className="mb-3" controlId="cijena">
                                 <Form.Label className="fw-bold">Cijena</Form.Label>
-                                <Form.Control type="number" name="cijena" required placeholder="0.00" />
+                                <Form.Control type="number" name="cijena" required placeholder="0,00" />
                             </Form.Group>
 
                             <hr style={{ marginTop: '30px', marginBottom: '30px', border: '0' }} />

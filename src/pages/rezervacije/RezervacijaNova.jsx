@@ -177,11 +177,14 @@ export default function RezervacijaNova() {
                                                 {filtrirajUsluge().map((usluga, index) => (
                                                     <div
                                                         key={usluga.sifra}
-                                                        className="p-2 cursor-pointer"
+                                                        className="p-2 cursor-pointer d-flex justify-content-between align-items-center"
                                                         style={{
                                                             cursor: 'pointer',
-                                                            backgroundColor: index === odabraniIndex ? '#007bff' : 'white',
-                                                            color: index === odabraniIndex ? 'white' : 'black'
+                                                            backgroundColor: index === odabraniIndex ? '#90abc7' : 'white',
+                                                            color: index === odabraniIndex ? 'white' : 'black',
+
+                                                            borderBottom: '1px solid #dee2e6',
+                                                            transition: 'background-color 0.2s'
                                                         }}
                                                         onClick={() => dodajUslugu(usluga)}
                                                         onMouseEnter={(e) => {
@@ -189,7 +192,8 @@ export default function RezervacijaNova() {
                                                         }}
                                                     >
                                                         <span>{usluga.naziv}</span>
-                                                        <span style={{fontWeight: 'bold', marginLeft:'10px'}}>
+                                                        
+                                                        <span style={{fontWeight: 'bold'}}>
                                                             {Number(usluga.cijena).toLocaleString('hr-HR', {minimumFractionDigits: 2})} €
                                                         </span>
                                                     </div>
@@ -211,8 +215,8 @@ export default function RezervacijaNova() {
                                                     <tbody>
                                                         {odabraneUsluge.map(usluga => (
                                                             <tr key={usluga.sifra}>
-                                                                <td>{usluga.naziv}</td>
-                                                                <td>{Number(usluga.cijena).toLocaleString('hr-Hr',{minimumFractionDigits: 2})}€</td>
+                                                                <td className="text-start">{usluga.naziv}</td>
+                                                                <td className="text-start">{Number(usluga.cijena).toLocaleString('hr-Hr',{minimumFractionDigits: 2})}€</td>
                                                                 <td>
                                                                     <Button
                                                                         variant="danger"
@@ -229,7 +233,7 @@ export default function RezervacijaNova() {
 
                                                 <div className="mt-3 border-top pt-2 text-end">
                                                     <h4 className="fw-bold">
-                                                        Ukupno: {odabraneUsluge.reduce((suma, usluge) => suma + parseFloat(usluge.cijena), 0).toFixed(2)}€
+                                                        Ukupno: {odabraneUsluge.reduce((suma, usluge) => suma + parseFloat(usluge.cijena), 0).toLocaleString('hr-HR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}€
                                                     </h4>
                                                 </div>
                                             </div>

@@ -36,7 +36,7 @@ export default function UslugaPregledGrid({ usluge, navigate, brisanje }) {
                                 <Button
                                     variant="outline-primary"
                                     className="flex-fill"
-                                    onClick={() => navigate(`/korisnici/${usluga.sifra}`)}
+                                    onClick={() => navigate(`/usluge/${usluga.sifra}`)}
                                 >
                                     ✏️Uredi
                                 </Button>

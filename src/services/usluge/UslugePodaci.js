@@ -22,6 +22,6 @@ export const usluge = [
     {
         sifra: 5,
         naziv: 'Aroma masaža',
-        brojTelefona: '40'
+        cijena: '40'
     }
 ]

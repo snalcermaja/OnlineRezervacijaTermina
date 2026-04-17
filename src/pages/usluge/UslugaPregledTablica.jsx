@@ -1,4 +1,5 @@
 import { Button, Table } from "react-bootstrap"
+import { NumericFormat } from "react-number-format"
 
 export default function UslugaPregledTablica({ usluge, navigate, brisanje }) {
 

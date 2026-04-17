@@ -165,7 +165,7 @@ export default function RezervacijaPromjena() {
                                             <option value="">Odaberite korisnika</option>
                                             {korisnici && korisnici.map((korisnik) => (
                                                 <option key={korisnik.sifra} value={korisnik.sifra}>
-                                                    {korisnik.ime}
+                                                    {korisnik.ime} {korisnik.prezime}
                                                 </option>
                                             ))}
                                         </Form.Select>

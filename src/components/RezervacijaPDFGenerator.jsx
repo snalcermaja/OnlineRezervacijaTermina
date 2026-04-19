@@ -70,7 +70,7 @@ export default function RezervacijaPDFGenerator({ rezervacija, korisnik, usluga 
         doc.text(`Prezime: ${korisnik.prezime}`, 25, yPosition)
         yPosition += 7
         doc.text(`Broj telefona: ${korisnik.brojTelefona}`, 25, yPosition)
-        yPosition += 7
+        yPosition += 15
 
         doc.setFontSize(14)
         doc.setFont(undefined, 'bold')
@@ -111,9 +111,9 @@ export default function RezervacijaPDFGenerator({ rezervacija, korisnik, usluga 
                 }
             });
         } else {
-            doc.setFontSize(11);
-            doc.setFont(undefined, 'italic');
-            doc.text('Nema usluga u ovoj rezervaciji.', 25, yPosition);
+            doc.setFontSize(11)
+            doc.setFont(undefined, 'italic')
+            doc.text('Nema usluga u ovoj rezervaciji.', 25, yPosition)
         }
 
         const pageCount = doc.internal.getNumberOfPages()
@@ -126,7 +126,7 @@ export default function RezervacijaPDFGenerator({ rezervacija, korisnik, usluga 
                 doc.internal.pageSize.getWidth() / 2,
                 doc.internal.pageSize.getHeight() - 10,
                 { align: 'center' }
-            );
+            )
             doc.text(
                 `Generirano: ${new Date().toLocaleString('hr-HR')}`,
                 20,

@@ -1,7 +1,8 @@
 import { Button, Card, Row, Col, Container } from "react-bootstrap"
 import FormatDatuma from "../../components/FormatDatuma"
+import { FaEdit, FaFilePdf, FaTrash } from "react-icons/fa"
 
-export default function RezervacijaPregledGrid({ rezervacije, navigate, brisanje, dohvatiImeKorisnika, dohvatiBrojUsluga}) {
+export default function RezervacijaPregledGrid({ rezervacije, navigate, brisanje, dohvatiImeKorisnika, dohvatiBrojUsluga, generirajPDFZaRezervaciju}) {
 
     return (
         <Container className="py-3 px-0">
@@ -49,6 +50,10 @@ export default function RezervacijaPregledGrid({ rezervacije, navigate, brisanje
                                     onClick={() => brisanje(rezervacija.sifra)}
                                 >
                                     🗑️Obriši
+                                </Button>
+                                 &nbsp;&nbsp;
+                                <Button variant="info" onClick={() => generirajPDFZaRezervaciju(rezervacija)} title="Generiraj PDF">
+                                    <FaFilePdf />
                                 </Button>
                             </Card.Footer>
                         </Card>

@@ -6,6 +6,10 @@ import { RouteNames } from "../../constants"
 import useBreakpoint from "../../hooks/useBreakpoint"
 import RezervacijaPregledGrid from "./RezervacijaPregledGrid"
 import RezervacijaPregledTablica from "./RezervacijaPregledTablica"
+import UslugeService from "../../services/usluge/UslugeService"
+
+
+import RezervacijaPDFGenerator from "../../components/RezervacijaPDFGenerator"
 
 export default function RezervacijaPregled() {
 
@@ -56,6 +60,31 @@ export default function RezervacijaPregled() {
         return rezervacija.usluge ? rezervacija.usluge.length : 0
     }
 
+    async function generirajPDFZaRezervaciju(rezervacija) {
+        const korisnik = korisnici.find(s => s.sifra === rezervacija.korisnik)
+        if (!korisnik) {
+            alert('Korisnik nije pronađen')
+            return
+        }
+
+        const odgovorUsluge = await UslugeService.get()
+        if (!odgovorUsluge.success) {
+            alert('Nije moguće dohvatiti uslugu')
+            return
+        }
+
+        const uslugeRezervacije = odgovorUsluge.data.filter(p =>
+            rezervacija.usluge && rezervacija.usluge.includes(p.sifra)
+        )
+
+        const generiraj = RezervacijaPDFGenerator({
+            rezervacija,
+            korisnik,
+            usluge: uslugeRezervacije
+        })
+        await generiraj()
+    }
+
     return (
         <>
             <Link to={RouteNames.REZERVACIJE_NOVE}
@@ -69,6 +98,7 @@ export default function RezervacijaPregled() {
                     brisanje={brisanje}
                     dohvatiImeKorisnika={dohvatiImeKorisnika}
                     dohvatiBrojUsluga={dohvatiBrojUsluga}
+                    generirajPDFZaRezervaciju={generirajPDFZaRezervaciju}
                 />
             ) : (
                 <RezervacijaPregledTablica
@@ -77,6 +107,7 @@ export default function RezervacijaPregled() {
                     brisanje={brisanje}
                     dohvatiImeKorisnika={dohvatiImeKorisnika}
                     dohvatiBrojUsluga={dohvatiBrojUsluga}
+                    generirajPDFZaRezervaciju={generirajPDFZaRezervaciju}
                 />
             )}
         </>

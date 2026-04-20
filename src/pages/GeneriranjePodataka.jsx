@@ -73,7 +73,7 @@ export default function GeneriranjePodataka() {
                 korisnik: randomKorisnik.sifra,
                 datum: faker.date.soon().toISOString(),
                 napomena: faker.lorem.sentence(),
-                usluge: nasumicneUsluge
+                usluge: nasumicneUsluge.map(u => u.sifra)
             };
             
             await RezervacijaService.dodaj(rezervacije);

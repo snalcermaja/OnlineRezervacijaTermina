@@ -1,7 +1,7 @@
 import { jsPDF } from 'jspdf';
 import { autoTable } from 'jspdf-autotable';
 
-export default function RezervacijaPDFGenerator({ rezervacija, korisnik, usluga }) {
+export default function RezervacijaPDFGenerator({ rezervacija, korisnik, usluge }) {
 
     const fetchFontAsBase64 = async (url) => {
         const response = await fetch(url)
@@ -77,8 +77,8 @@ export default function RezervacijaPDFGenerator({ rezervacija, korisnik, usluga 
         doc.text('Popis usluga:', 20, yPosition)
         yPosition += 10
 
-        if (usluga && usluga.length > 0) {
-            const tableData = usluga.map(usluga => [
+        if (usluge && usluge.length > 0) {
+            const tableData = usluge.map(usluga => [
                 usluga.naziv,
                 usluga.cijena
             ])

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
 import UslugeService from "../../services/usluge/UslugeService"
-import RezervacijaService from "../../services/rezervacije/RezervacijaService"
 import { Link, useNavigate } from "react-router-dom"
 import { RouteNames } from "../../constants"
 import useBreakpoint from "../../hooks/useBreakpoint"
 import UslugaPregledGrid from "./UslugaPregledGrid"
 import UslugaPregledTablica from "./UslugaPregledTablica"
+
 
 
 export default function UslugePregled() {
@@ -14,38 +14,44 @@ export default function UslugePregled() {
     const sirina = useBreakpoint()
     const [usluge, setUsluge] = useState([])
 
-    useEffect(() => {
-        ucitajUsluge()
-    }, [])
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(0)
+    const [totalItems, setTotalItems] = useState(0)
+    const pageSize = 8
 
-    async function ucitajUsluge() {
-        await UslugeService.get().then((odgovor) => {
+    useEffect(() => {
+        ucitajUsluge(currentPage)
+    }, [currentPage])
+
+    async function ucitajUsluge(page) {
+        await UslugeService.getPage(page, pageSize).then((odgovor) => {
             if (!odgovor.success) {
                 alert('Nije implementiran servis')
                 return
             }
 
             setUsluge(odgovor.data)
+            setTotalPages(odgovor.totalPages)
+            setTotalItems(odgovor.totalItems)
         })
     }
 
     async function brisanje(sifra) {
         if (!confirm('Sigurno obrisati?')) return
-
-        const rezervacijeRezultat = await RezervacijaService.get()
-        if (rezervacijeRezultat.success) {
-            const rezervacijeKojeKoristeUsluge = rezervacijeRezultat.data.filter(rezervacija => rezervacija.usluga === sifra);
-
-            if (rezervacijeKojeKoristeUsluge.length > 0) {
-                alert(`Ne možete obrisati ove usluge jer je postavljen na ${rezervacijeKojeKoristeUsluge.length} rezervacija/e. Prvo obrišite ili promijenite uslugu u toj rezervaciji.`)
-                return
-            }
-        }
-
         await UslugeService.obrisi(sifra)
-        await UslugeService.get().then((odgovor) => {
-            setUsluge(odgovor.data)
-        })
+
+        const newTotalItems = totalItems - 1
+        const newTotalPages = Math.ceil(newTotalItems / pageSize);
+
+        if (currentPage > newTotalPages && newTotalPages > 0) {
+            setCurrentPage(newTotalPages)
+        } else {
+            ucitajUsluge(currentPage)
+        }
+    }
+
+    function handlePageChange(page) {
+        setCurrentPage(page)
     }
 
 
@@ -60,12 +66,16 @@ export default function UslugePregled() {
                     usluge={usluge}
                     navigate={navigate}
                     brisanje={brisanje}
+                    handlePageChange={handlePageChange}
+                    totalPages={totalPages}
                 />
             ) : (
                 <UslugaPregledTablica
                     usluge={usluge}
                     navigate={navigate}
                     brisanje={brisanje}
+                    handlePageChange={handlePageChange}
+                    totalPages={totalPages}
                 />
             )}
         </>

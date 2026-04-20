@@ -1,7 +1,7 @@
-import { Button, Card, Row, Col, Container } from "react-bootstrap"
+import { Button, Card, Row, Col, Container, Pagination } from "react-bootstrap"
 import { NumericFormat } from "react-number-format"
 
-export default function UslugaPregledGrid({ usluge, navigate, brisanje }) {
+export default function UslugaPregledGrid({ usluge, navigate, brisanje, handlePageChange, currentPage, totalPages }) {
     return (
         <Container className="py-3 px-0">
             <Row>
@@ -52,6 +52,47 @@ export default function UslugaPregledGrid({ usluge, navigate, brisanje }) {
                     </Col>
                 ))}
             </Row>
+
+            {
+                totalPages > 1 && (
+
+                    <div className="d-flex justify-content-center">
+                        <Pagination>
+                            <Pagination.First
+                                onClick={() => handlePageChange(1)}
+                                disabled={currentPage === 1}
+                            />
+                            <Pagination.Prev
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
+                            />
+
+                            {[...Array(totalPages)].map((_, index) => {
+                                const pageNumber = index + 1
+                                    return (
+                                        <Pagination.Item
+                                            key={pageNumber}
+                                            active={pageNumber === currentPage}
+                                            onClick={() => handlePageChange(pageNumber)}
+                                        >
+                                            {pageNumber}
+                                        </Pagination.Item>
+                                    );
+                            })}
+
+                            <Pagination.Next
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                            />
+                            <Pagination.Last
+                                onClick={() => handlePageChange(totalPages)}
+                                disabled={currentPage === totalPages}
+                            />
+                        </Pagination>
+                    </div>
+
+                )
+            }
         </Container>
     )
 }

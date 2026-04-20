@@ -40,7 +40,7 @@ async function promjeni(sifra, usluga) {
     const index = usluge.findIndex(s => s.sifra === parseInt(sifra));
     
     if (index !== -1) {
-        usluge[index] = { ...usluge[index], ...usluga};
+        usluge[index] = { ...usluge[index], ...usluga, sifra: parseInt(sifra)};
         spremiUStorage(usluge);
     }
     return { data: usluge[index] };
@@ -53,10 +53,29 @@ async function obrisi(sifra) {
     return { message: 'Obrisano' };
 }
 
+async function getPage(page = 1, pageSize = 8) {
+    const usluge = dohvatiSveIzStorage();
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedData = usluge.slice(startIndex, endIndex);
+    const totalItems = usluge.length;
+    const totalPages = Math.ceil(totalItems / pageSize);
+
+    return {
+        success: true,
+        data: paginatedData,
+        currentPage: page,
+        pageSize: pageSize,
+        totalPages: totalPages,
+        totalItems: totalItems
+    };
+}
+
 export default {
     get,
     dodaj,
     getBySifra,
     promjeni,
-    obrisi
+    obrisi,
+    getPage
 };

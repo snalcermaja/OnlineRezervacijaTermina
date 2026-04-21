@@ -29,19 +29,19 @@ export default function RezervacijaPromjena() {
     }, [])
 
     useEffect(() => {
-    if (rezervacija && rezervacija.sifra) {
-        
-        setOdabraniKorisnik(rezervacija.korisniksifra || 0)
-        setUnesenaNapomena(rezervacija.napomena || '')
+        if (rezervacija && rezervacija.sifra) {
 
-        if (rezervacija.datum) {
-            setOdabraniDatum(rezervacija.datum.substring(0, 16))
-        }
+            setOdabraniKorisnik(rezervacija.korisniksifra || 0)
+            setUnesenaNapomena(rezervacija.napomena || '')
 
-        if (rezervacija.usluge) {
-            setOdabraneUsluge(rezervacija.usluge)
+            if (rezervacija.datum) {
+                setOdabraniDatum(rezervacija.datum.substring(0, 16))
+            }
+
+            if (rezervacija.usluge) {
+                setOdabraneUsluge(rezervacija.usluge)
+            }
         }
-    }
     }, [rezervacija, usluge])
 
     async function ucitajRezervaciju() {
@@ -75,7 +75,7 @@ export default function RezervacijaPromjena() {
     }
 
     function dodajUslugu(usluga) {
-        if (!odabraneUsluge.find(p => p.sifra === usluga.sifra)) {
+        if (!odabraneUsluge.find(p => p && p.sifra === usluga.sifra)) {
             setOdabraneUsluge([...odabraneUsluge, usluga])
         }
         setPretragaUsluga('')
@@ -90,7 +90,7 @@ export default function RezervacijaPromjena() {
     function filtrirajUsluge() {
         if (!pretragaUsluga) return []
         return usluge.filter(p =>
-            !odabraneUsluge.find(op => op.sifra === p.sifra) &&
+            !odabraneUsluge.find(op => op && op.sifra === p.sifra) &&
             (p.naziv.toLowerCase().includes(pretragaUsluga.toLowerCase()))
         )
     }
@@ -130,21 +130,21 @@ export default function RezervacijaPromjena() {
         const unesenaNapomena = podaci.get('napomena')
 
         if (!korisnikRaw || korisnikRaw === "") {
-            alert("Morate odabrati korisnika!");
-            return;
+            alert("Morate odabrati korisnika!")
+            return
         }
 
         const odabraniKorisnik = parseInt(korisnikRaw);
         if (isNaN(odabraniKorisnik) || odabraniKorisnik <= 0) {
-            alert("Odabrani korisnik nije valjan!");
-            return;
+            alert("Odabrani korisnik nije valjan!")
+            return
         }
 
         promjeni({
             korisnik: odabraniKorisnik,
             datum: odabraniDatum,
             napomena: unesenaNapomena,
-            usluge: odabraneUsluge.map(p => p.sifra)
+            usluge: odabraneUsluge.map(p => p && p.sifra)
         });
     }
 
@@ -186,10 +186,15 @@ export default function RezervacijaPromjena() {
                                                 as="textarea"
                                                 rows={3}
                                                 name="napomena"
-                                                placeholder="Unesite dodatne napomene..." 
-                                                defaultValue={rezervacija.napomena}/>
+                                                placeholder="Unesite dodatne napomene..."
+                                                defaultValue={rezervacija.napomena} />
                                         </Form.Group>
                                     </Form.Group>
+                                    <div className="mt-3 border-top pt-2 text-end">
+                                        <h4 className="fw-bold">
+                                            Ukupno: {odabraneUsluge.reduce((suma, usluge) => suma + parseFloat(usluge?.cijena || 0), 0).toLocaleString('hr-HR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€
+                                        </h4>
+                                    </div>
                                 </Card.Body>
                             </Card>
                         </Col>
@@ -233,8 +238,8 @@ export default function RezervacijaPromjena() {
                                                         }}
                                                     >
                                                         <span>{usluga.naziv}</span>
-                                                        <span style={{fontWeight: 'bold'}}>
-                                                            {Number(usluga.cijena).toLocaleString('hr-HR', {minimumFractionDigits: 2})} €
+                                                        <span style={{ fontWeight: 'bold' }}>
+                                                            {Number(usluga.cijena).toLocaleString('hr-HR', { minimumFractionDigits: 2 })} €
                                                         </span>
                                                     </div>
                                                 ))}
@@ -253,15 +258,17 @@ export default function RezervacijaPromjena() {
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {odabraneUsluge.map((usluga, index) => (
-                                                            <tr key={`${usluga.sifra}-${index}`}>
-                                                                <td className="text-start">{usluga.naziv}</td>
-                                                                <td className="text-start">{Number(usluga.cijena).toLocaleString('hr-Hr',{minimumFractionDigits: 2})}€</td>
+                                                        {odabraneUsluge
+                                                        .filter(usluga => usluga && usluga.naziv)
+                                                        .map((usluga, index) => (
+                                                            <tr key={`${usluga?.sifra}-${index}`}>
+                                                                <td className="text-start">{usluga?.naziv}</td>
+                                                                <td className="text-start">{Number(usluga?.cijena || 0).toLocaleString('hr-Hr', { minimumFractionDigits: 2 })}€</td>
                                                                 <td>
                                                                     <Button
                                                                         variant="danger"
                                                                         size="sm"
-                                                                        onClick={() => ukloniUslugu(usluga.sifra)}
+                                                                        onClick={() => ukloniUslugu(usluga?.sifra)}
                                                                     >
                                                                         Obriši
                                                                     </Button>
@@ -270,12 +277,6 @@ export default function RezervacijaPromjena() {
                                                         ))}
                                                     </tbody>
                                                 </Table>
-
-                                                <div className="mt-3 border-top pt-2 text-end">
-                                                    <h4 className="fw-bold">
-                                                        Ukupno: {odabraneUsluge.reduce((suma, usluge) => suma + parseFloat(usluge.cijena), 0).toLocaleString('hr-HR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}€
-                                                    </h4>
-                                                </div>
                                             </div>
                                         ) : (
                                             <p className="text-muted italic">Nema odabranih usluga</p>

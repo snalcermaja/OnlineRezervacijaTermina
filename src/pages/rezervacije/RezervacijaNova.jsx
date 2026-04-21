@@ -149,6 +149,11 @@ export default function RezervacijaNova() {
                                                 placeholder="Unesite dodatne napomene..." />
                                         </Form.Group>
                                     </Form.Group>
+                                    <div className="mt-3 border-top pt-2 text-end">
+                                        <h4 className="fw-bold">
+                                            Ukupno: {odabraneUsluge.reduce((suma, usluge) => suma + parseFloat(usluge.cijena), 0).toLocaleString('hr-HR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€
+                                        </h4>
+                                    </div>
                                 </Card.Body>
                             </Card>
                         </Col>
@@ -192,9 +197,9 @@ export default function RezervacijaNova() {
                                                         }}
                                                     >
                                                         <span>{usluga.naziv}</span>
-                                                        
-                                                        <span style={{fontWeight: 'bold'}}>
-                                                            {Number(usluga.cijena).toLocaleString('hr-HR', {minimumFractionDigits: 2})} €
+
+                                                        <span style={{ fontWeight: 'bold' }}>
+                                                            {Number(usluga.cijena).toLocaleString('hr-HR', { minimumFractionDigits: 2 })} €
                                                         </span>
                                                     </div>
                                                 ))}
@@ -216,7 +221,7 @@ export default function RezervacijaNova() {
                                                         {odabraneUsluge.map(usluga => (
                                                             <tr key={usluga.sifra}>
                                                                 <td className="text-start">{usluga.naziv}</td>
-                                                                <td className="text-start">{Number(usluga.cijena).toLocaleString('hr-Hr',{minimumFractionDigits: 2})}€</td>
+                                                                <td className="text-start">{Number(usluga.cijena).toLocaleString('hr-Hr', { minimumFractionDigits: 2 })}€</td>
                                                                 <td>
                                                                     <Button
                                                                         variant="danger"
@@ -230,17 +235,11 @@ export default function RezervacijaNova() {
                                                         ))}
                                                     </tbody>
                                                 </Table>
-
-                                                <div className="mt-3 border-top pt-2 text-end">
-                                                    <h4 className="fw-bold">
-                                                        Ukupno: {odabraneUsluge.reduce((suma, usluge) => suma + parseFloat(usluge.cijena), 0).toLocaleString('hr-HR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}€
-                                                    </h4>
-                                                </div>
                                             </div>
-                                        ):(
+                                        ) : (
                                             <p className="text-muted italic">Nema odabranih usluga</p>
                                         )}
-                                         </div>
+                                    </div>
                                 </Card.Body>
                             </Card>
                         </Col>

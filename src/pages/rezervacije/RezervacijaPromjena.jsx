@@ -39,7 +39,8 @@ export default function RezervacijaPromjena() {
             }
 
             if (rezervacija.usluge) {
-                setOdabraneUsluge(rezervacija.usluge)
+                const odabrani = usluge.filter(p => rezervacija.usluge.includes(p.sifra))
+                setOdabraneUsluge(odabrani)
             }
         }
     }, [rezervacija, usluge])

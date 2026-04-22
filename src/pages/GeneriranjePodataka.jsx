@@ -68,8 +68,7 @@ export default function GeneriranjePodataka() {
                 nasumicneUsluge.push(sveUsluge[0])
             }
   
-            const rezervacije = {
-                ime: randomKorisnik.ime.trim().split(/\s+/).slice(0, 2).map(rijec => rijec[0]).join('').toUpperCase(),   
+            const rezervacije = {  
                 korisnik: randomKorisnik.sifra,
                 datum: faker.date.soon().toISOString(),
                 napomena: faker.lorem.sentence(),

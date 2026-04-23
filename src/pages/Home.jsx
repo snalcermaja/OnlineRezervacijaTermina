@@ -6,6 +6,10 @@ import { useState, useEffect } from 'react'
 import KorisniciService from '../services/korisnici/KorisniciService'
 import UslugeService from '../services/usluge/UslugeService'
 import RezervacijaService from '../services/rezervacije/RezervacijaService'
+import Calendar from 'react-calendar'
+import 'react-calendar/dist/Calendar.css'
+import { rezervacije } from '../services/rezervacije/RezervacijaPodaci'
+
 
 
 
@@ -15,10 +19,11 @@ export default function Home() {
     const [brojUsluga, setBrojUsluga] = useState(0);
     const [brojRezervacija, setBrojRezervacija] = useState(0);
 
-
     const [animatedKorisnici, setAnimatedKorisnici] = useState(0);
     const [animatedUsluge, setAnimatedUsluge] = useState(0);
     const [animatedRezervacije, setAnimatedRezervacije] = useState(0);
+
+    const [listaRezervacija, setListaRezervacija] = useState([])
 
     useEffect(() => {
         async function fetchData() {
@@ -30,6 +35,7 @@ export default function Home() {
                 setBrojKorisnika(korisniciRezultat.data.length);
                 setBrojUsluga(uslugeRezultat.data.length);
                 setBrojRezervacija(rezervacijeRezultat.data.length);
+                setListaRezervacija(rezervacijeRezultat.data)
             } catch (e) {
                 console.error("Greška pri dohvaćanju podataka", e);
             }
@@ -93,6 +99,27 @@ export default function Home() {
                                 <h6 className="text-muted text-uppercase small">Rezervacije</h6>
                                 <h3 className="fw-bold text-secondary">{brojRezervacija}</h3>
                             </div>
+                        </div>
+                    </div>
+
+                    <div className='row justify-content-center mt-5'>
+                        <div style={{ display: 'inline-block', width: 'auto', background: 'white', padding: '20px', borderRadius: '15px', boxShadow: '0 4px 15px rgb(0,0,0,0.1)'}}>
+                            <Calendar 
+                            locale='hr-HR'
+                            tileContent={({ date, view }) => {
+                                if (view === 'month') {
+                                    const broj = listaRezervacija.filter(rezervacije =>
+                                        new Date(rezervacije.datum).toDateString() === date.toDateString()
+                                    ).length
+
+                                    return broj > 0 ? (
+                                        <div className='reservation-count'>
+                                            {broj}
+                                        </div>
+                                    ) : null
+                                }
+                            }}
+                            />
                         </div>
                     </div>
                 </div>

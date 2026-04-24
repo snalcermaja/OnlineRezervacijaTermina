@@ -9,6 +9,7 @@ import RezervacijaService from '../services/rezervacije/RezervacijaService'
 import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
 import { rezervacije } from '../services/rezervacije/RezervacijaPodaci'
+import { Link } from 'react-router-dom'
 
 
 
@@ -157,7 +158,23 @@ export default function Home() {
                                 <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
                                     {rezervacijeZaDan.map((rezervacije, index) =>
                                     <div key={index} className='alert alert-info mb-2' style={{ borderLeft:'5px solid #0d6efd'}}>
-                                        <p className='mb-0'><strong>Korisnik:</strong>{dohvatiImeKorisnika(rezervacije.korisnik)}</p>
+                                        <p className='mb-0'>
+                                            <strong>Korisnik: </strong>
+                                            <Link
+                                            to={`/rezervacije/${rezervacije.sifra}`}
+                                            style={{ textDecoration: 'none', color:'#0d6efd', fontWeight:'bold'}}
+                                            >
+                                                {dohvatiImeKorisnika(rezervacije.korisnik)}
+                                            </Link>
+                                            </p>
+
+                                        <p className='mb-0' style={{ fontSize:'0.9rem', color:'#555'}}>
+                                            <strong>Vrijeme: </strong>
+                                            {rezervacije.datum ? new Date(rezervacije.datum).toLocaleTimeString('hr-HR', {
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                            }) : 'Nema termina'}
+                                            </p>
                                     </div>
                                     )}
                                 </div>

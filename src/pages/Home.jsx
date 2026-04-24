@@ -15,6 +15,8 @@ import { rezervacije } from '../services/rezervacije/RezervacijaPodaci'
 
 export default function Home() {
 
+    const [korisnici, setKorisnici] = useState([])
+
     const [brojKorisnika, setBrojKorisnika] = useState(0);
     const [brojUsluga, setBrojUsluga] = useState(0);
     const [brojRezervacija, setBrojRezervacija] = useState(0);
@@ -24,6 +26,8 @@ export default function Home() {
     const [animatedRezervacije, setAnimatedRezervacije] = useState(0);
 
     const [listaRezervacija, setListaRezervacija] = useState([])
+    const [odabraniDatum, setodabraniDatum] = useState(null)
+    const [rezervacijeZaDan, setRezervacijeZaDan] = useState([])
 
     useEffect(() => {
         async function fetchData() {
@@ -36,12 +40,18 @@ export default function Home() {
                 setBrojUsluga(uslugeRezultat.data.length);
                 setBrojRezervacija(rezervacijeRezultat.data.length);
                 setListaRezervacija(rezervacijeRezultat.data)
+                setKorisnici(korisniciRezultat.data)
             } catch (e) {
                 console.error("Greška pri dohvaćanju podataka", e);
             }
         }
         fetchData();
     }, []);
+
+    function dohvatiImeKorisnika(sifraKorisnika){
+        const korisnik = korisnici.find(s => s.sifra === sifraKorisnika)
+        return korisnik ? `${korisnik.ime} ${korisnik.prezime}` : 'Učitavanje...' 
+    }
 
     useEffect(() => {
         if (animatedKorisnici < brojKorisnika) {
@@ -69,6 +79,14 @@ export default function Home() {
             return () => clearTimeout(timer);
         }
     }, [animatedRezervacije, brojRezervacija]);
+
+    const handleDateClick = (date) => {
+        setodabraniDatum(date)
+        const filtrirano = listaRezervacija.filter(rezervacije =>
+            new Date (rezervacije.datum).toDateString() === date.toDateString()
+        )
+        setRezervacijeZaDan(filtrirano)
+    }
 
     return (
         <>
@@ -103,9 +121,12 @@ export default function Home() {
                     </div>
 
                     <div className='row justify-content-center mt-5'>
+
+                        <div className='col-md-6 d-flex justify-content-end'>
                         <div style={{ display: 'inline-block', width: 'auto', background: 'white', padding: '20px', borderRadius: '15px', boxShadow: '0 4px 15px rgb(0,0,0,0.1)'}}>
                             <Calendar 
                             locale='hr-HR'
+                            onChange={handleDateClick}
                             tileContent={({ date, view }) => {
                                 if (view === 'month') {
                                     const broj = listaRezervacija.filter(rezervacije =>
@@ -122,6 +143,30 @@ export default function Home() {
                             />
                         </div>
                     </div>
+
+                    <div className='col-md-4'>
+                        <div style={{ background: 'white', padding: '20px', borderRadius: '15px', boxShadow: '0 4px 15px rgb(0,0,0,0.1)', height:'400px', display:'flex' , flexDirection:'column'}}>
+                            <h4 className='text-secondary'>
+                                {odabraniDatum
+                                ?`Rezervacije za ${odabraniDatum.toLocaleDateString('hr-HR')}`
+                                : "Odaberite datum"}
+                            </h4>
+                            <hr />
+
+                            {rezervacijeZaDan.length > 0 ? (
+                                <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                                    {rezervacijeZaDan.map((rezervacije, index) =>
+                                    <div key={index} className='alert alert-info mb-2' style={{ borderLeft:'5px solid #0d6efd'}}>
+                                        <p className='mb-0'><strong>Korisnik:</strong>{dohvatiImeKorisnika(rezervacije.korisnik)}</p>
+                                    </div>
+                                    )}
+                                </div>
+                                ):(
+                                    <p className='text-muted text-center mt-5'>Nema rezervacija za ovaj dan.</p>
+                            )}
+                        </div>
+                    </div>
+                </div>
                 </div>
 
                 <h1 className='text-secondary'>Harmony Massage Studio</h1>

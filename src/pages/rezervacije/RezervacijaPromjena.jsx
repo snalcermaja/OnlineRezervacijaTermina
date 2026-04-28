@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Link, useNavigate, useParams } from "react-router-dom"
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import RezervacijaService from "../../services/rezervacije/RezervacijaService"
 import KorisniciService from "../../services/korisnici/KorisniciService"
 import { Button, Col, Form, Row, Container, Card, Table } from "react-bootstrap"
@@ -9,6 +9,7 @@ import UslugeService from "../../services/usluge/UslugeService"
 export default function RezervacijaPromjena() {
 
     const navigate = useNavigate()
+    const location = useLocation()
     const params = useParams()
     const [rezervacija, setRezervacija] = useState({})
     const [korisnici, setKorisnici] = useState([])
@@ -162,7 +163,7 @@ export default function RezervacijaPromjena() {
 
                                     <Form.Group className="mb-4" controlId="korisnik">
                                         <Form.Label className="fw-bold">Korisnik</Form.Label>
-                                        <Form.Select name="korisnik" required value={rezervacija.korisnik}>
+                                        <Form.Select name="korisnik" required value={rezervacija?.korisnik}>
                                             <option value="">Odaberite korisnika</option>
                                             {korisnici && korisnici.map((korisnik) => (
                                                 <option key={korisnik.sifra} value={korisnik.sifra}>
@@ -188,7 +189,7 @@ export default function RezervacijaPromjena() {
                                                 rows={3}
                                                 name="napomena"
                                                 placeholder="Unesite dodatne napomene..."
-                                                defaultValue={rezervacija.napomena} />
+                                                defaultValue={rezervacija?.napomena} />
                                         </Form.Group>
                                     </Form.Group>
                                     <div className="mt-3 border-top pt-2 text-end">
@@ -293,9 +294,18 @@ export default function RezervacijaPromjena() {
                     <hr />
 
                     <div className="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                        <Link to={RouteNames.REZERVACIJE} className="btn btn-danger px-4">
+                        <Button
+                        type="button"
+                        className="btn btn-danger px-4"
+                        onClick={() => {
+                            if (location.state?.comingFrom === 'home'){
+                                navigate('/')
+                            }else{
+                                navigate(RouteNames.REZERVACIJE)
+                            }
+                        }}>
                             Odustani
-                        </Link>
+                        </Button>
                         <Button type="submit" variant="success">
                             Promjeni rezervaciju
                         </Button>

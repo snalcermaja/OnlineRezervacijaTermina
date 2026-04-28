@@ -8,7 +8,6 @@ import UslugeService from '../services/usluge/UslugeService'
 import RezervacijaService from '../services/rezervacije/RezervacijaService'
 import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
-import { rezervacije } from '../services/rezervacije/RezervacijaPodaci'
 import { Link } from 'react-router-dom'
 
 
@@ -162,6 +161,7 @@ export default function Home() {
                                             <strong>Korisnik: </strong>
                                             <Link
                                             to={`/rezervacije/${rezervacije.sifra}`}
+                                            state={{ comingFrom: 'home'}}
                                             style={{ textDecoration: 'none', color:'#0d6efd', fontWeight:'bold'}}
                                             >
                                                 {dohvatiImeKorisnika(rezervacije.korisnik)}
@@ -179,7 +179,16 @@ export default function Home() {
                                     )}
                                 </div>
                                 ):(
-                                    <p className='text-muted text-center mt-5'>Nema rezervacija za ovaj dan.</p>
+                                    <div className='text-center mt-5 mb-5'>
+                                        <p className='text-muted mb-4'>Nema rezervacija za ovaj dan.</p>
+                                        <Link
+                                        to="/rezervacije/dodaj"
+                                        className='btn btn-outline-success'
+                                        state={{ comingFrom: 'home'}}
+                                        >
+                                            Dodaj novu rezervaciju
+                                        </Link>
+                                    </div>
                             )}
                         </div>
                     </div>

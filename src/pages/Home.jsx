@@ -182,7 +182,7 @@ export default function Home() {
                                     <div className='text-center mt-5 mb-5'>
                                         <p className='text-muted mb-4'>Nema rezervacija za ovaj dan.</p>
                                         <Link
-                                        to="/rezervacije/dodaj"
+                                        to="/rezervacije/nove"
                                         className='btn btn-outline-success'
                                         state={{ comingFrom: 'home'}}
                                         >

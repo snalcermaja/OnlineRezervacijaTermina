@@ -88,7 +88,7 @@ export default function RezervacijaNova() {
         })
     }
 
-    function odradiSubmit(e) {
+    async function odradiSubmit(e) {
         e.preventDefault()
         const podaci = new FormData(e.target)
 
@@ -250,9 +250,19 @@ export default function RezervacijaNova() {
                     <hr />
 
                     <div className="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                        <Link to={RouteNames.REZERVACIJE} className="btn btn-danger px-4">
+                        <Button
+                            type="button"
+                            className="btn btn-danger px-4"
+                            onClick={() => {
+                                if (location.state?.comingFrom === 'home') {
+                                    navigate('/')
+                                } else {
+                                    navigate(RouteNames.REZERVACIJE)
+                                }
+                            }}>
                             Odustani
-                        </Link>
+                        </Button>
+
                         <Button type="submit" variant="success">
                             Dodaj novu rezervaciju
                         </Button>

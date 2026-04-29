@@ -123,7 +123,7 @@ export default function RezervacijaPromjena() {
         })
     }
 
-    function odradiSubmit(e) {
+    async function odradiSubmit(e) {
         e.preventDefault();
 
         const podaci = new FormData(e.target)
@@ -142,13 +142,24 @@ export default function RezervacijaPromjena() {
             return
         }
 
-        promjeni({
-            korisnik: odabraniKorisnik,
-            datum: odabraniDatum,
-            napomena: unesenaNapomena,
-            usluge: odabraneUsluge.map(p => p && p.sifra)
-        });
+        try {
+            await promjeni({
+                korisnik: odabraniKorisnik,
+                datum: odabraniDatum,
+                napomena: unesenaNapomena,
+                usluge: odabraneUsluge.map(p => p && p.sifra)
+            })
+            if (location.state?.comingFrom === 'home') {
+                navigate('/')
+            } else {
+                navigate(RouteNames.REZERVACIJE)
+            }
+        } catch(error){
+            console.error("Greška pri promjeni:", error)
+            alert("Došlo je do greške pri spremanju promjena.")
+        }
     }
+
 
     return (
         <>
@@ -261,22 +272,22 @@ export default function RezervacijaPromjena() {
                                                     </thead>
                                                     <tbody>
                                                         {odabraneUsluge
-                                                        .filter(usluga => usluga && usluga.naziv)
-                                                        .map((usluga, index) => (
-                                                            <tr key={`${usluga?.sifra}-${index}`}>
-                                                                <td className="text-start">{usluga?.naziv}</td>
-                                                                <td className="text-start">{Number(usluga?.cijena || 0).toLocaleString('hr-Hr', { minimumFractionDigits: 2 })}€</td>
-                                                                <td>
-                                                                    <Button
-                                                                        variant="danger"
-                                                                        size="sm"
-                                                                        onClick={() => ukloniUslugu(usluga?.sifra)}
-                                                                    >
-                                                                        Obriši
-                                                                    </Button>
-                                                                </td>
-                                                            </tr>
-                                                        ))}
+                                                            .filter(usluga => usluga && usluga.naziv)
+                                                            .map((usluga, index) => (
+                                                                <tr key={`${usluga?.sifra}-${index}`}>
+                                                                    <td className="text-start">{usluga?.naziv}</td>
+                                                                    <td className="text-start">{Number(usluga?.cijena || 0).toLocaleString('hr-Hr', { minimumFractionDigits: 2 })}€</td>
+                                                                    <td>
+                                                                        <Button
+                                                                            variant="danger"
+                                                                            size="sm"
+                                                                            onClick={() => ukloniUslugu(usluga?.sifra)}
+                                                                        >
+                                                                            Obriši
+                                                                        </Button>
+                                                                    </td>
+                                                                </tr>
+                                                            ))}
                                                     </tbody>
                                                 </Table>
                                             </div>
@@ -295,18 +306,18 @@ export default function RezervacijaPromjena() {
 
                     <div className="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                         <Button
-                        type="button"
-                        className="btn btn-danger px-4"
-                        onClick={() => {
-                            if (location.state?.comingFrom === 'home'){
-                                navigate('/')
-                            }else{
-                                navigate(RouteNames.REZERVACIJE)
-                            }
-                        }}>
+                            type="button"
+                            className="btn btn-danger px-4"
+                            onClick={() => {
+                                if (location.state?.comingFrom === 'home') {
+                                    navigate('/')
+                                } else {
+                                    navigate(RouteNames.REZERVACIJE)
+                                }
+                            }}>
                             Odustani
                         </Button>
-                        
+
                         <Button type="submit" variant="success">
                             Promjeni rezervaciju
                         </Button>

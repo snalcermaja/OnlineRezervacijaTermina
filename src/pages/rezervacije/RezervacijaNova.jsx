@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Form, Button, Row, Col, Container, Card, Table } from "react-bootstrap"
 import { RouteNames } from "../../constants"
-import { Link, useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import RezervacijaService from "../../services/rezervacije/RezervacijaService"
 import KorisniciService from "../../services/korisnici/KorisniciService"
 import UslugeService from "../../services/usluge/UslugeService"
@@ -9,6 +9,7 @@ import UslugeService from "../../services/usluge/UslugeService"
 export default function RezervacijaNova() {
 
     const navigate = useNavigate()
+    const location = useLocation()
     const [korisnici, setKorisnici] = useState([])
     const [usluge, setUsluge] = useState([])
     const [odabraneUsluge, setOdabraneUsluge] = useState([])
@@ -83,9 +84,12 @@ export default function RezervacijaNova() {
     }
 
     async function dodaj(rezervacija) {
-        await RezervacijaService.dodaj(rezervacija).then(() => {
-            navigate(RouteNames.REZERVACIJE)
-        })
+        await RezervacijaService.dodaj(rezervacija)
+            if (location.state?.comingFrom === 'home') {
+                navigate('/')
+            } else {
+                navigate(RouteNames.REZERVACIJE)
+            }
     }
 
     async function odradiSubmit(e) {
@@ -127,7 +131,7 @@ export default function RezervacijaNova() {
                                             <option value="">Odaberite korisnika</option>
                                             {korisnici && korisnici.map((korisnik) => (
                                                 <option key={korisnik.sifra} value={korisnik.sifra}>
-                                                    {korisnik.ime}
+                                                    {korisnik.ime} {korisnik.prezime}
                                                 </option>
                                             ))}
                                         </Form.Select>

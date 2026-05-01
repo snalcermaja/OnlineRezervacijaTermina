@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 import RezervacijaService from "../../services/rezervacije/RezervacijaService"
 import KorisniciService from "../../services/korisnici/KorisniciService"
 import UslugeService from "../../services/usluge/UslugeService"
+import { ShemaRezervacija } from "../../schemas/ShemaRezervacija"
 
 export default function RezervacijaNova() {
 
@@ -16,6 +17,7 @@ export default function RezervacijaNova() {
     const [pretragaUsluga, setPretragaUsluga] = useState('')
     const [prikaziAutocomplete, setPrikaziAutocomplete] = useState(false)
     const [odabraniIndex, setOdabraniIndex] = useState(-1)
+    const [errors, setErrors] = useState({})
 
     useEffect(() => {
         ucitajKorisnike()
@@ -85,33 +87,53 @@ export default function RezervacijaNova() {
 
     async function dodaj(rezervacija) {
         await RezervacijaService.dodaj(rezervacija)
-            if (location.state?.comingFrom === 'home') {
-                navigate('/')
-            } else {
-                navigate(RouteNames.REZERVACIJE)
-            }
+        if (location.state?.comingFrom === 'home') {
+            navigate('/')
+        } else {
+            navigate(RouteNames.REZERVACIJE)
+        }
     }
 
     async function odradiSubmit(e) {
         e.preventDefault()
         const podaci = new FormData(e.target)
+        
+        setErrors({});
+        const objektPodataka = Object.fromEntries(podaci);
+
+        const rezultat = ShemaRezervacija.safeParse(objektPodataka);
+
+        if (!rezultat.success) {
+            const noveGreske = {};
+
+            rezultat.error.issues.forEach((issue) => {
+                const kljuc = issue.path[0];
+                if (!noveGreske[kljuc]) {
+                    noveGreske[kljuc] = issue.message;
+                }
+            });
+
+            setErrors(noveGreske);
+            return;
+        }
 
         const odabraniKorisnik = parseInt(podaci.get('korisnik'))
-        const odabraniDatum = podaci.get('datum')
-        const unesenaNapomena = podaci.get('napomena')
-
-        if (isNaN(odabraniKorisnik) || odabraniKorisnik <= 0) {
-            alert("Odabrani korisnik nije valjan!");
-            return;
-
-        }
+        const odabraneUsluge = parseInt(podaci.get('usluga'))
 
         dodaj({
             korisnik: odabraniKorisnik,
-            datum: odabraniDatum,
-            napomena: unesenaNapomena,
+            datum: new Date(podaci.get('datum')).toISOString(),
+            napomena: napomena,
             usluge: odabraneUsluge.map(p => p.sifra)
         })
+    }
+
+    const ocistiGresku = (nazivPolja) => {
+        if (errors[nazivPolja]) {
+            const noveGreske = { ...errors };
+            delete noveGreske[nazivPolja];
+            setErrors(noveGreske);
+        }
     }
 
     return (
@@ -127,7 +149,7 @@ export default function RezervacijaNova() {
 
                                     <Form.Group className="mb-4" controlId="korisnik">
                                         <Form.Label className="fw-bold">Korisnik</Form.Label>
-                                        <Form.Select name="korisnik" required>
+                                        <Form.Select name="korisnik" required isInvalid={!!errors.korisnik} onFocus={() => ocistiGresku('korisnik')}>
                                             <option value="">Odaberite korisnika</option>
                                             {korisnici && korisnici.map((korisnik) => (
                                                 <option key={korisnik.sifra} value={korisnik.sifra}>
@@ -135,13 +157,21 @@ export default function RezervacijaNova() {
                                                 </option>
                                             ))}
                                         </Form.Select>
+                                        <Form.Control.Feedback type="invalid">
+                                            {errors.korisnik}
+                                        </Form.Control.Feedback>
 
 
                                         <Form.Group className="mb-4" controlId="datum">
                                             <Form.Label className="fw-bold">Datum</Form.Label>
                                             <Form.Control type="datetime-local" name="datum"
                                                 onClick={(e) => e.target.showPicker()}
+                                                isInvalid={!!errors.datum}
+                                                onFocus={() => ocistiGresku('datum')}
                                             />
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors.datum}
+                                            </Form.Control.Feedback>
                                         </Form.Group>
 
                                         <Form.Group className="mb-0" controlId="napomena">
@@ -150,7 +180,8 @@ export default function RezervacijaNova() {
                                                 as="textarea"
                                                 rows={3}
                                                 name="napomena"
-                                                placeholder="Unesite dodatne napomene..." />
+                                                placeholder="Unesite dodatne napomene..."
+                                            />
                                         </Form.Group>
                                     </Form.Group>
                                     <div className="mt-3 border-top pt-2 text-end">

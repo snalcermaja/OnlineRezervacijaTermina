@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react"
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
+import { useLocation, useNavigate, useParams } from "react-router-dom"
 import RezervacijaService from "../../services/rezervacije/RezervacijaService"
 import KorisniciService from "../../services/korisnici/KorisniciService"
 import { Button, Col, Form, Row, Container, Card, Table } from "react-bootstrap"
 import { RouteNames } from "../../constants"
 import UslugeService from "../../services/usluge/UslugeService"
+import { ShemaRezervacija } from "../../schemas/ShemaRezervacija"
+
 
 export default function RezervacijaPromjena() {
 
@@ -19,9 +21,11 @@ export default function RezervacijaPromjena() {
     const [prikaziAutocomplete, setPrikaziAutocomplete] = useState(false)
     const [odabraniIndex, setOdabraniIndex] = useState(-1)
 
-    const [odabraniKorisnik, setOdabraniKorisnik] = useState(0)
+    const [setOdabraniKorisnik] = useState(0)
     const [odabraniDatum, setOdabraniDatum] = useState('')
-    const [unesenaNapomena, setUnesenaNapomena] = useState('')
+    const [setUnesenaNapomena] = useState('')
+
+    const [errors, setErrors] = useState({})
 
     useEffect(() => {
         ucitajRezervaciju()
@@ -124,41 +128,45 @@ export default function RezervacijaPromjena() {
     }
 
     async function odradiSubmit(e) {
-        e.preventDefault();
-
+        e.preventDefault()
         const podaci = new FormData(e.target)
-        const korisnikRaw = podaci.get('korisnik')
-        const odabraniDatum = podaci.get('datum')
-        const unesenaNapomena = podaci.get('napomena')
+        setErrors({});
+        const objektPodataka = Object.fromEntries(podaci);
 
-        if (!korisnikRaw || korisnikRaw === "") {
-            alert("Morate odabrati korisnika!")
-            return
-        }
+        const rezultat = ShemaRezervacija.safeParse(objektPodataka);
 
-        const odabraniKorisnik = parseInt(korisnikRaw);
-        if (isNaN(odabraniKorisnik) || odabraniKorisnik <= 0) {
-            alert("Odabrani korisnik nije valjan!")
-            return
-        }
+        if (!rezultat.success) {
+            const noveGreske = {};
 
-        try {
-            await promjeni({
-                korisnik: odabraniKorisnik,
-                datum: odabraniDatum,
-                napomena: unesenaNapomena,
-                usluge: odabraneUsluge.map(p => p && p.sifra)
-            })
-            if (location.state?.comingFrom === 'home') {
-                navigate('/')
-            } else {
-                navigate(RouteNames.REZERVACIJE)
-            }
-        } catch(error){
-            console.error("Greška pri promjeni:", error)
-            alert("Došlo je do greške pri spremanju promjena.")
+            rezultat.error.issues.forEach((issue) => {
+                const kljuc = issue.path[0];
+                if (!noveGreske[kljuc]) {
+                    noveGreske[kljuc] = issue.message;
+                }
+            });
+
+            setErrors(noveGreske);
+            return;
         }
+        const odabraniKorisnik = parseInt(podaci.get('korisnik'))
+        const odabraniDatum = parseInt(podaci.get('dartum'))
+        const odabraneUsluge = parseInt(podaci.get('usluga'))
+
+        promjeni({
+            korisnik: odabraniKorisnik,
+            datum: odabraniDatum,
+            napomena: napomena,
+            usluge: odabraneUsluge.map(p => p.sifra)
+        })
     }
+
+    const ocistiGresku = (nazivPolja) => {
+        if (errors[nazivPolja]) {
+            const noveGreske = { ...errors };
+            delete noveGreske[nazivPolja];
+            setErrors(noveGreske);
+        }
+    };
 
 
     return (
@@ -174,7 +182,9 @@ export default function RezervacijaPromjena() {
 
                                     <Form.Group className="mb-4" controlId="korisnik">
                                         <Form.Label className="fw-bold">Korisnik</Form.Label>
-                                        <Form.Select name="korisnik" required value={rezervacija?.korisnik}>
+                                        <Form.Select name="korisnik" required value={rezervacija?.korisnik}
+                                            isInvalid={!!errors.korisnik}
+                                            onFocus={() => ocistiGresku('korisnik')}>
                                             <option value="">Odaberite korisnika</option>
                                             {korisnici && korisnici.map((korisnik) => (
                                                 <option key={korisnik.sifra} value={korisnik.sifra}>
@@ -182,6 +192,9 @@ export default function RezervacijaPromjena() {
                                                 </option>
                                             ))}
                                         </Form.Select>
+                                        <Form.Control.Feedback type="invalid">
+                                            {errors.korisnik}
+                                        </Form.Control.Feedback>
 
 
                                         <Form.Group className="mb-4" controlId="datum">
@@ -190,7 +203,12 @@ export default function RezervacijaPromjena() {
                                                 value={odabraniDatum}
                                                 onChange={(e) => setOdabraniDatum(e.target.value)}
                                                 onClick={(e) => e.target.showPicker()}
+                                                isInvalid={!!errors.korisnik}
+                                                onFocus={() => ocistiGresku('korisnik')}
                                             />
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors.datum}
+                                            </Form.Control.Feedback>
                                         </Form.Group>
 
                                         <Form.Group className="mb-0" controlId="napomena">
@@ -228,8 +246,9 @@ export default function RezervacijaPromjena() {
                                                 setPrikaziAutocomplete(e.target.value.length > 0)
                                                 setOdabraniIndex(-1)
                                             }}
-                                            onFocus={() => setPrikaziAutocomplete(pretragaUsluga.length > 0)}
                                             onKeyDown={handleKeyDown}
+                                            isInvalid={!!errors.korisnik}
+                                            onFocus={() => ocistiGresku('korisnik')}
                                         />
                                         {prikaziAutocomplete && filtrirajUsluge().length > 0 && (
                                             <div className="position-absolute w-100 bg-white border rounded shadow-sm" style={{ zIndex: 1000, maxHeight: '200px', overflowY: 'auto' }}>

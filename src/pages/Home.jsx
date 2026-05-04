@@ -9,6 +9,8 @@ import RezervacijaService from '../services/rezervacije/RezervacijaService'
 import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
 import { Link } from 'react-router-dom'
+import useBreakpoint from '../hooks/useBreakpoint'
+
 
 
 
@@ -28,6 +30,8 @@ export default function Home() {
     const [listaRezervacija, setListaRezervacija] = useState([])
     const [odabraniDatum, setodabraniDatum] = useState(null)
     const [rezervacijeZaDan, setRezervacijeZaDan] = useState([])
+
+    const sirina = useBreakpoint()
 
     useEffect(() => {
         async function fetchData() {
@@ -93,7 +97,7 @@ export default function Home() {
             <div className="container mt-4">
 
                 <div className="row mb-5 justify-content-center">
-                    <div className="col-md-3">
+                    <div className={sirina === 'sm' ? 'col-12 mb-3' : 'col-md-3'}>
                         <div className="card shadow-sm border-0 text-center bg-light" style={{ borderRadius: '15px' }}>
                             <div className="card-body">
                                 <h6 className="text-muted text-uppercase small">Korisnici</h6>
@@ -102,7 +106,7 @@ export default function Home() {
                         </div>
                     </div>
 
-                    <div className="col-md-3">
+                    <div className={sirina === 'sm' ? 'col-12 mb-3' : 'col-md-3'}>
                         <div className="card shadow-sm border-0 text-center bg-light" style={{ borderRadius: '15px' }}>
                             <div className="card-body">
                                 <h6 className="text-muted text-uppercase small">Usluge</h6>
@@ -111,7 +115,7 @@ export default function Home() {
                         </div>
                     </div>
 
-                    <div className="col-md-3">
+                    <div className={sirina === 'sm' ? 'col-12 mb-3' : 'col-md-3'}>
                         <div className="card shadow-sm border-0 text-center bg-light" style={{ borderRadius: '15px' }}>
                             <div className="card-body">
                                 <h6 className="text-muted text-uppercase small">Rezervacije</h6>
@@ -122,7 +126,7 @@ export default function Home() {
 
                     <div className='row justify-content-center mt-5'>
 
-                        <div className='col-md-6 d-flex justify-content-end'>
+                        <div className={sirina === 'sm' ? 'col-12 mb-4' : 'col-md-6 d-flex justify-content-end'}>
                         <div style={{ display: 'inline-block', width: 'auto', background: 'white', padding: '20px', borderRadius: '15px', boxShadow: '0 4px 15px rgb(0,0,0,0.1)'}}>
                             <Calendar 
                             locale='hr-HR'
@@ -144,7 +148,7 @@ export default function Home() {
                         </div>
                     </div>
 
-                    <div className='col-md-4'>
+                    <div className={sirina === 'sm' ? 'col-12' : 'col-md-4'}>
                         <div style={{ background: 'white', padding: '20px', borderRadius: '15px', boxShadow: '0 4px 15px rgb(0,0,0,0.1)', height:'400px', display:'flex' , flexDirection:'column'}}>
                             <h4 className='text-secondary'>
                                 {odabraniDatum
@@ -195,7 +199,7 @@ export default function Home() {
                 </div>
                 </div>
 
-                <h1 className='text-secondary'>Harmony Massage Studio</h1>
+                <h1 className={sirina === 'sm' ? 'text-secondary text-center fs-3' : 'text-secondary'}>Harmony Massage Studio</h1>
                 <hr />
 
                 <p className='fw-semibold'>Dobrodošli u naš studio za masažu</p>
@@ -210,15 +214,15 @@ export default function Home() {
 
                 <div className="row mt-4">
 
-                    <div className="col-md-4">
+                    <div className={sirina === 'sm' ? 'col-12 mb-3' : 'col-md-4'}>
                         <img src={slika02} className="img-fluid rounded shadow" />
                     </div>
 
-                    <div className="col-md-4">
+                    <div className={sirina === 'sm' ? 'col-12 mb-3' : 'col-md-4'}>
                         <img src={slika01} className="img-fluid rounded shadow" />
                     </div>
 
-                    <div className="col-md-4">
+                    <div className={sirina === 'sm' ? 'col-12 mb-3' : 'col-md-4'}>
                         <img src={slika03} className="img-fluid rounded shadow" />
                     </div>
 

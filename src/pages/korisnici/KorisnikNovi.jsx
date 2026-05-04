@@ -2,7 +2,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { RouteNames } from "../../constants";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import KorisniciService from "../../services/korisnici/KorisniciService";
-import { ShemaKorisnik } from "../../schemas/ShemKorisnik"
+import { ShemaKorisnik } from "../../schemas/ShemaKorisnik"
+import { useState } from "react";
 
 export default function KorisnikNovi() {
 
@@ -63,7 +64,7 @@ export default function KorisnikNovi() {
 
                             <Form.Group className="mb-3" controlId="ime">
                                 <Form.Label className="fw-bold">Ime</Form.Label>
-                                <Form.Control type="text" name="ime" required placeholder="Unesite ime"
+                                <Form.Control type="text" name="ime"  placeholder="Unesite ime"
                                     isInvalid={!!errors.ime}
                                     onFocus={() => ocistiGresku('ime')}
                                 />
@@ -74,7 +75,7 @@ export default function KorisnikNovi() {
 
                             <Form.Group className="mb-3" controlId="prezime">
                                 <Form.Label className="fw-bold">Prezime</Form.Label>
-                                <Form.Control type="text" name="prezime" required placeholder="Unesite prezime"
+                                <Form.Control type="text" name="prezime"  placeholder="Unesite prezime"
                                     isInvalid={!!errors.prezime}
                                     onFocus={() => ocistiGresku('prezime')}
                                 />

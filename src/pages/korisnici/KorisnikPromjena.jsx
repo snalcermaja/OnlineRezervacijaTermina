@@ -3,7 +3,7 @@ import { RouteNames } from "../../constants";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import KorisniciService from "../../services/korisnici/KorisniciService";
 import { useEffect, useState } from "react";
-import { ShemaKorisnik } from "../../schemas/ShemKorisnik"
+import { ShemaKorisnik } from "../../schemas/ShemaKorisnik"
 
 export default function KorisnikPromjena() {
 

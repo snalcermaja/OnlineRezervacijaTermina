@@ -51,6 +51,7 @@ export default function RezervacijaNova() {
         setPretragaUsluga('')
         setPrikaziAutocomplete(false)
         setOdabraniIndex(-1)
+        ocistiGresku('usluge')
     }
 
     function ukloniUslugu(sifra) {
@@ -100,7 +101,7 @@ export default function RezervacijaNova() {
         
         setErrors({});
         const objektPodataka = Object.fromEntries(podaci);
-
+        objektPodataka.usluge =odabraneUsluge.map(p => p.sifra)
         const rezultat = ShemaRezervacija.safeParse(objektPodataka);
 
         if (!rezultat.success) {
@@ -112,18 +113,17 @@ export default function RezervacijaNova() {
                     noveGreske[kljuc] = issue.message;
                 }
             });
-
             setErrors(noveGreske);
             return;
         }
 
         const odabraniKorisnik = parseInt(podaci.get('korisnik'))
-        const odabraneUsluge = parseInt(podaci.get('usluga'))
+        //const odabraneUsluge = parseInt(podaci.get('usluga'))
 
         dodaj({
             korisnik: odabraniKorisnik,
             datum: new Date(podaci.get('datum')).toISOString(),
-            napomena: napomena,
+            napomena: podaci.get('napomena'),
             usluge: odabraneUsluge.map(p => p.sifra)
         })
     }
@@ -149,7 +149,7 @@ export default function RezervacijaNova() {
 
                                     <Form.Group className="mb-4" controlId="korisnik">
                                         <Form.Label className="fw-bold">Korisnik</Form.Label>
-                                        <Form.Select name="korisnik" required isInvalid={!!errors.korisnik} onFocus={() => ocistiGresku('korisnik')}>
+                                        <Form.Select name="korisnik"  isInvalid={!!errors.korisnik} onFocus={() => ocistiGresku('korisnik')}>
                                             <option value="">Odaberite korisnika</option>
                                             {korisnici && korisnici.map((korisnik) => (
                                                 <option key={korisnik.sifra} value={korisnik.sifra}>
@@ -212,6 +212,7 @@ export default function RezervacijaNova() {
                                             onFocus={() => setPrikaziAutocomplete(pretragaUsluga.length > 0)}
                                             onKeyDown={handleKeyDown}
                                         />
+                                        
                                         {prikaziAutocomplete && filtrirajUsluge().length > 0 && (
                                             <div className="position-absolute w-100 bg-white border rounded shadow-sm" style={{ zIndex: 1000, maxHeight: '200px', overflowY: 'auto' }}>
                                                 {filtrirajUsluge().map((usluga, index) => (
@@ -242,6 +243,9 @@ export default function RezervacijaNova() {
                                         )}
                                     </Form.Group>
                                     <div className="mt-4">
+                                        <div style={{color: 'red'}}>
+                                            {errors.usluge}
+                                        </div>
                                         {odabraneUsluge.length > 0 ? (
                                             <div style={{ overflow: 'auto', maxHeight: '300px' }}>
                                                 <Table striped bordered hover size="sm">

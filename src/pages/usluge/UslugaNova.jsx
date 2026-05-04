@@ -3,6 +3,7 @@ import { RouteNames } from "../../constants";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import UslugeService from "../../services/usluge/UslugeService";
 import { ShemaUsluga } from "../../schemas/ShemaUsluga"
+import { useState } from "react";
 
 export default function UslugaNova() {
 
@@ -20,8 +21,8 @@ export default function UslugaNova() {
         const podaci = new FormData(e.target)
 
         setErrors({});
-        const objektPodataka = Object.fromEntries(podaci);
-
+        let objektPodataka = Object.fromEntries(podaci);
+        
         const rezultat = ShemaUsluga.safeParse(objektPodataka);
 
         if (!rezultat.success) {
@@ -43,6 +44,14 @@ export default function UslugaNova() {
         })
     }
 
+    const ocistiGresku = (nazivPolja) => {
+        if (errors[nazivPolja]) {
+            const noveGreske = { ...errors };
+            delete noveGreske[nazivPolja];
+            setErrors(noveGreske);
+        }
+    }
+
     return (
         <>
             <Container className="mt-4">
@@ -54,7 +63,7 @@ export default function UslugaNova() {
                         <Form onSubmit={odradiSubmit}>
                             <Form.Group className="mb-3" controlId="naziv">
                                 <Form.Label className="fw-bold">Naziv</Form.Label>
-                                <Form.Control type="text" name="naziv" required placeholder="Unesite naziv usluge"
+                                <Form.Control type="text" name="naziv"  placeholder="Unesite naziv usluge"
                                     isInvalid={!!errors.naziv}
                                     onFocus={() => ocistiGresku('naziv')}
                                 />
@@ -65,7 +74,7 @@ export default function UslugaNova() {
 
                             <Form.Group className="mb-3" controlId="cijena">
                                 <Form.Label className="fw-bold">Cijena</Form.Label>
-                                <Form.Control type="number" name="cijena" required placeholder="0,00"
+                                <Form.Control type="number" name="cijena"  placeholder="0,00"
                                     isInvalid={!!errors.cijena}
                                     onFocus={() => ocistiGresku('cijena')}
                                 />

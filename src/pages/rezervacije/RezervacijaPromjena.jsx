@@ -21,9 +21,9 @@ export default function RezervacijaPromjena() {
     const [prikaziAutocomplete, setPrikaziAutocomplete] = useState(false)
     const [odabraniIndex, setOdabraniIndex] = useState(-1)
 
-    const [setOdabraniKorisnik] = useState(0)
+    const [odabraniKorisnik, setOdabraniKorisnik] = useState(0)
     const [odabraniDatum, setOdabraniDatum] = useState('')
-    const [setUnesenaNapomena] = useState('')
+    const [unesenaNapomena, setUnesenaNapomena] = useState('')
 
     const [errors, setErrors] = useState({})
 

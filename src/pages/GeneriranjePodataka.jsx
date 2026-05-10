@@ -14,7 +14,9 @@ export default function GeneriranjePodataka() {
     const [poruka, setPoruka] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    
+    const [brojOperatera, setBrojOperatera] = useState(5)
+
+
     const faker = new Faker({
         locale: [hr, en]
     });
@@ -23,7 +25,7 @@ export default function GeneriranjePodataka() {
 
         for (let i = 0; i < broj; i++) {
             await KorisniciService.dodaj({
-                ime: i%2===0? faker.person.firstName('male') : faker.person.firstName('female'),
+                ime: i % 2 === 0 ? faker.person.firstName('male') : faker.person.firstName('female'),
                 prezime: faker.person.lastName(),
                 brojTelefona: faker.phone.number('09# ### ####')
             });
@@ -32,17 +34,17 @@ export default function GeneriranjePodataka() {
 
     const generirajUsluge = async (broj) => {
         const nazivUsluge = [
-        'Masaža leđa',
-        'Masaža tijela',
-        'Sportska masaža',
-        'Masaža svijećom',
-        'Aroma masaža'
-    ];
+            'Masaža leđa',
+            'Masaža tijela',
+            'Sportska masaža',
+            'Masaža svijećom',
+            'Aroma masaža'
+        ];
 
         for (let i = 0; i < broj; i++) {
             const usluga = {
                 naziv: nazivUsluge[i % nazivUsluge.length] + (i >= nazivUsluge.length ? ` ${Math.floor(i / nazivUsluge.length) + 1}` : ''),
-                cijena: faker.number.float({min: 20, max: 60, precision: 0.01}).toFixed(2)
+                cijena: faker.number.float({ min: 20, max: 60, precision: 0.01 }).toFixed(2)
             };
             await UslugeService.dodaj(usluga);
         }
@@ -56,25 +58,25 @@ export default function GeneriranjePodataka() {
         const rezultatUsluge = await UslugeService.get()
         const sveUsluge = rezultatUsluge.data
 
-        
+
         if (korisnici.length === 0) {
             throw new Error('Nema dostupnih korisnika. Prvo generirajte korisnike.');
         }
-        
+
         for (let i = 0; i < broj; i++) {
             const randomKorisnik = korisnici[faker.number.int({ min: 0, max: korisnici.length - 1 })];
             const nasumicneUsluge = []
-            if (sveUsluge.length > 0){
+            if (sveUsluge.length > 0) {
                 nasumicneUsluge.push(sveUsluge[0])
             }
-  
-            const rezervacije = {  
+
+            const rezervacije = {
                 korisnik: randomKorisnik.sifra,
                 datum: faker.date.soon().toISOString(),
                 napomena: faker.lorem.sentence(),
                 usluge: nasumicneUsluge.map(u => u.sifra)
             };
-            
+
             await RezervacijaService.dodaj(rezervacije);
         }
     };
@@ -107,7 +109,7 @@ export default function GeneriranjePodataka() {
         setPoruka(null);
 
         try {
-            
+
             await generirajUsluge(brojUsluga);
 
             setPoruka({
@@ -135,7 +137,7 @@ export default function GeneriranjePodataka() {
         try {
             const rezultat = await UslugeService.get();
             const usluge = rezultat.data;
-            
+
             for (const usluga of usluge) {
                 await UslugeService.obrisi(usluga.sifra);
             }
@@ -165,7 +167,7 @@ export default function GeneriranjePodataka() {
         try {
             const rezultat = await KorisniciService.get();
             const korisnici = rezultat.data;
-            
+
             for (const korisnik of korisnici) {
                 await KorisniciService.obrisi(korisnik.sifra);
             }
@@ -217,7 +219,7 @@ export default function GeneriranjePodataka() {
         try {
             const rezultat = await RezervacijaService.get();
             const rezervacije = rezultat.data;
-            
+
             for (const rezervacija of rezervacije) {
                 await RezervacijaService.obrisi(rezervacija.sifra);
             }
@@ -230,6 +232,114 @@ export default function GeneriranjePodataka() {
             setPoruka({
                 tip: 'danger',
                 tekst: 'Greška pri brisanju rezervacija: ' + error.message
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const generirajOperatere = async (broj) => {
+        // Prvo obriši admin operatera ako postoji
+        const rezultat = await OperaterService.get();
+        const operateri = rezultat.data;
+        const adminOperater = operateri.find(op => op.email === 'admin@edunova.hr');
+
+        if (adminOperater) {
+            await OperaterService.obrisi(adminOperater.sifra);
+        }
+
+        // Dodaj admin operatera
+        await OperaterService.dodaj({
+            email: 'admin@edunova.hr',
+            lozinka: 'Edunova123!',
+            uloga: 'admin'
+        });
+
+        // Generiraj korisnik operatere
+        for (let i = 0; i < broj; i++) {
+            await OperaterService.dodaj({
+                email: faker.internet.email(),
+                lozinka: 'Edunova123!',
+                uloga: 'korisnik'
+            });
+        }
+    };
+
+    const handleGenerirajOperatere = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setPoruka(null);
+
+        try {
+            await generirajOperatere(brojOperatera);
+
+            setPoruka({
+                tip: 'success',
+                tekst: `Uspješno generirano ${brojOperatera + 1} operatera (1 admin + ${brojOperatera} korisnika)!`
+            });
+        } catch (error) {
+            setPoruka({
+                tip: 'danger',
+                tekst: 'Greška pri generiranju operatera: ' + error.message
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleObrisiOperatere = async () => {
+        if (!window.confirm('Jeste li sigurni da želite obrisati sve operatere?')) {
+            return;
+        }
+
+        setLoading(true);
+        setPoruka(null);
+
+        try {
+            const rezultat = await OperaterService.get();
+            const operateri = rezultat.data;
+
+            for (const operater of operateri) {
+                await OperaterService.obrisi(operater.sifra);
+            }
+
+            setPoruka({
+                tip: 'success',
+                tekst: `Uspješno obrisano ${operateri.length} operatera!`
+            });
+        } catch (error) {
+            setPoruka({
+                tip: 'danger',
+                tekst: 'Greška pri brisanju operatera: ' + error.message
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleMemorijaULocalStorage = async () => {
+        if (!window.confirm('Jeste li sigurni da želite pretočiti iz memorije u localStorage?')) {
+            return;
+        }
+
+        setLoading(true);
+        setPoruka(null);
+
+        try {
+
+            localStorage.setItem(PrefixStorage.GRUPE, JSON.stringify(grupeMemorija.grupe));
+            localStorage.setItem(PrefixStorage.POLAZNICI, JSON.stringify(polazniciMemorija.polaznici));
+            localStorage.setItem(PrefixStorage.SMJEROVI, JSON.stringify(smjeroviMemorija.smjerovi));
+            localStorage.setItem(PrefixStorage.OPERATERI, JSON.stringify(operateriMemorija.operateri));
+
+            setPoruka({
+                tip: 'success',
+                tekst: `Uspješno presipano`
+            });
+        } catch (error) {
+            setPoruka({
+                tip: 'danger',
+                tekst: 'Greška pri presipavanju memorija - localStorage: ' + error.message
             });
         } finally {
             setLoading(false);
@@ -266,9 +376,9 @@ export default function GeneriranjePodataka() {
                                 Unesite broj korisnika (1-50)
                             </Form.Text>
                         </Form.Group>
-                        <Button 
-                            variant="primary" 
-                            type="submit" 
+                        <Button
+                            variant="primary"
+                            type="submit"
                             disabled={loading}
                             className="w-100"
                         >
@@ -292,9 +402,9 @@ export default function GeneriranjePodataka() {
                                 Unesite broj usluga (1-200)
                             </Form.Text>
                         </Form.Group>
-                        <Button 
-                            variant="primary" 
-                            type="submit" 
+                        <Button
+                            variant="primary"
+                            type="submit"
                             disabled={loading}
                             className="w-100"
                         >
@@ -318,9 +428,9 @@ export default function GeneriranjePodataka() {
                                 Unesite broj rezervacija (1-100)
                             </Form.Text>
                         </Form.Group>
-                        <Button 
-                            variant="primary" 
-                            type="submit" 
+                        <Button
+                            variant="primary"
+                            type="submit"
                             disabled={loading}
                             className="w-100"
                         >
@@ -328,10 +438,37 @@ export default function GeneriranjePodataka() {
                         </Button>
                     </Form>
                 </Col>
+
+                <Col md={3}>
+                    <Form onSubmit={handleGenerirajOperatere}>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Broj operatera</Form.Label>
+                            <Form.Control
+                                type="number"
+                                min="1"
+                                max="50"
+                                value={brojOperatera}
+                                onChange={(e) => setBrojOperatera(parseInt(e.target.value))}
+                                disabled={loading}
+                            />
+                            <Form.Text className="text-muted">
+                                +1 admin (1-50)
+                            </Form.Text>
+                        </Form.Group>
+                        <Button
+                            variant="primary"
+                            type="submit"
+                            disabled={loading}
+                            className="w-100"
+                        >
+                            {loading ? 'Generiranje...' : 'Generiraj operatere'}
+                        </Button>
+                    </Form>
+                </Col>
             </Row>
 
             <Alert variant="warning" className="mt-3">
-                <strong>Upozorenje:</strong> Ove akcije će dodati nove podatke u postojeće. 
+                <strong>Upozorenje:</strong> Ove akcije će dodati nove podatke u postojeće.
                 Ako želite početi ispočetka, prvo obrišite postojeće podatke.
             </Alert>
 
@@ -344,8 +481,8 @@ export default function GeneriranjePodataka() {
 
             <Row className="mt-3">
                 <Col md={4}>
-                    <Button 
-                        variant="danger" 
+                    <Button
+                        variant="danger"
                         onClick={handleObrisiKorisnike}
                         disabled={loading}
                         className="w-100 mb-2"
@@ -354,8 +491,8 @@ export default function GeneriranjePodataka() {
                     </Button>
                 </Col>
                 <Col md={4}>
-                    <Button 
-                        variant="danger" 
+                    <Button
+                        variant="danger"
                         onClick={handleObrisiUsluge}
                         disabled={loading}
                         className="w-100 mb-2"
@@ -364,8 +501,8 @@ export default function GeneriranjePodataka() {
                     </Button>
                 </Col>
                 <Col md={4}>
-                    <Button 
-                        variant="danger" 
+                    <Button
+                        variant="danger"
                         onClick={handleObrisiRezervacije}
                         disabled={loading}
                         className="w-100 mb-2"

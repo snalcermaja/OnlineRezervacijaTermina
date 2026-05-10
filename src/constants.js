@@ -14,7 +14,27 @@ export const RouteNames = {
     REZERVACIJE_NOVE: '/rezervacije/nove',
     REZERVACIJE_PROMJENA: '/rezervacije/:sifra',
 
-    GENERIRANJE_PODATAKA: '/generiraj-podatke'
+    OPERATERI: '/operateri',
+    OPERATERI_NOVI: '/operateri/novi',
+    OPERATERI_PROMJENA: '/operateri/:sifra',
+    OPERATERI_PROMJENA_LOZINKE: '/operateri/:sifra/lozinka',
+
+    GENERIRANJE_PODATAKA: '/generiraj-podatke',
+    APLIKACIJE_POLAZNIKA: '/aplikacije-polaznika',
+
+    LOGIN: '/login',
+    REGISTRACIJA: '/registracija',
+
+    NADZORNA_PLOCA: '/nadzorna-ploca',
+
+    TEST: 'test'
 }
 
 export const DATA_SOURCE = 'localStorage'
+
+export const PrefixStorage = {
+    korisnici: 'korisnici',
+    usluge: 'usluge',
+    REZERVACIJE: 'rezervacije',
+    OPERATERI: 'operateri'
+}

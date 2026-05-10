@@ -10,7 +10,7 @@ import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
 import { Link } from 'react-router-dom'
 import useBreakpoint from '../hooks/useBreakpoint'
-
+import OperaterService from "../services/operateri/OperaterService"
 
 
 
@@ -31,6 +31,10 @@ export default function Home() {
     const [odabraniDatum, setodabraniDatum] = useState(null)
     const [rezervacijeZaDan, setRezervacijeZaDan] = useState([])
 
+    const [brojOperatera, setBrojOperatera] = useState(0);
+    const [brojAdmina, setBrojAdmina] = useState(0);
+    const [animatedOperateri, setAnimatedOperateri] = useState(0);
+
     const sirina = useBreakpoint()
 
     useEffect(() => {
@@ -39,12 +43,18 @@ export default function Home() {
                 const korisniciRezultat = await KorisniciService.get();
                 const uslugeRezultat = await UslugeService.get();
                 const rezervacijeRezultat = await RezervacijaService.get();
+                const operateri = await OperaterService.get();
 
                 setBrojKorisnika(korisniciRezultat.data.length);
                 setBrojUsluga(uslugeRezultat.data.length);
                 setBrojRezervacija(rezervacijeRezultat.data.length);
                 setListaRezervacija(rezervacijeRezultat.data)
                 setKorisnici(korisniciRezultat.data)
+
+                const admini = operateri.data.filter(op => op.uloga === 'admin').length;
+                const korisnici = operateri.data.filter(op => op.uloga === 'korisnik').length;
+                setBrojAdmina(admini);
+                setBrojKorisnika(korisnici);
             } catch (e) {
                 console.error("Greška pri dohvaćanju podataka", e);
             }
@@ -52,9 +62,9 @@ export default function Home() {
         fetchData();
     }, []);
 
-    function dohvatiImeKorisnika(sifraKorisnika){
+    function dohvatiImeKorisnika(sifraKorisnika) {
         const korisnik = korisnici.find(s => s.sifra === sifraKorisnika)
-        return korisnik ? `${korisnik.ime} ${korisnik.prezime}` : 'Učitavanje...' 
+        return korisnik ? `${korisnik.ime} ${korisnik.prezime}` : 'Učitavanje...'
     }
 
     useEffect(() => {
@@ -79,7 +89,7 @@ export default function Home() {
         if (animatedRezervacije < brojRezervacija) {
             const timer = setTimeout(() => {
                 setAnimatedRezervacije(prev => prev + 1);
-            }, 50); 
+            }, 50);
             return () => clearTimeout(timer);
         }
     }, [animatedRezervacije, brojRezervacija]);
@@ -87,10 +97,19 @@ export default function Home() {
     const handleDateClick = (date) => {
         setodabraniDatum(date)
         const filtrirano = listaRezervacija.filter(rezervacije =>
-            new Date (rezervacije.datum).toDateString() === date.toDateString()
+            new Date(rezervacije.datum).toDateString() === date.toDateString()
         )
         setRezervacijeZaDan(filtrirano)
     }
+
+    useEffect(() => {
+        if (animatedOperateri < brojOperatera) {
+            const timer = setTimeout(() => {
+                setAnimatedOperateri(prev => Math.min(prev + 1, brojOperatera));
+            }, 150);
+            return () => clearTimeout(timer);
+        }
+    }, [animatedOperateri, brojOperatera]);
 
     return (
         <>
@@ -124,79 +143,94 @@ export default function Home() {
                         </div>
                     </div>
 
+                    <Col md={6} className="mb-3">
+                        <Card className="shadow-lg border-0 statistikaPanel h-100">
+                            <Card.Body className="text-center">
+                                <p className="text-white">Operateri</p>
+                                <div className="statistikaTekst">
+                                    {animatedOperateri}
+                                </div>
+                                <div style={{ fontSize: '0.9rem', marginTop: '10px' }}>
+                                    <span className="badge bg-danger me-2">Admin: {brojAdmina}</span>
+                                    <span className="badge bg-primary">Korisnik: {brojKorisnika}</span>
+                                </div>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+
                     <div className='row justify-content-center mt-5'>
 
                         <div className={sirina === 'sm' ? 'col-12 mb-4' : 'col-md-6 d-flex justify-content-end'}>
-                        <div style={{ display: 'inline-block', width: 'auto', background: 'white', padding: '20px', borderRadius: '15px', boxShadow: '0 4px 15px rgb(0,0,0,0.1)'}}>
-                            <Calendar 
-                            locale='hr-HR'
-                            onChange={handleDateClick}
-                            tileContent={({ date, view }) => {
-                                if (view === 'month') {
-                                    const broj = listaRezervacija.filter(rezervacije =>
-                                        new Date(rezervacije.datum).toDateString() === date.toDateString()
-                                    ).length
+                            <div style={{ display: 'inline-block', width: 'auto', background: 'white', padding: '20px', borderRadius: '15px', boxShadow: '0 4px 15px rgb(0,0,0,0.1)' }}>
+                                <Calendar
+                                    locale='hr-HR'
+                                    onChange={handleDateClick}
+                                    tileContent={({ date, view }) => {
+                                        if (view === 'month') {
+                                            const broj = listaRezervacija.filter(rezervacije =>
+                                                new Date(rezervacije.datum).toDateString() === date.toDateString()
+                                            ).length
 
-                                    return broj > 0 ? (
-                                        <div className='reservation-count'>
-                                            {broj}
-                                        </div>
-                                    ) : null
-                                }
-                            }}
-                            />
+                                            return broj > 0 ? (
+                                                <div className='reservation-count'>
+                                                    {broj}
+                                                </div>
+                                            ) : null
+                                        }
+                                    }}
+                                />
+                            </div>
                         </div>
-                    </div>
 
-                    <div className={sirina === 'sm' ? 'col-12' : 'col-md-4'}>
-                        <div style={{ background: 'white', padding: '20px', borderRadius: '15px', boxShadow: '0 4px 15px rgb(0,0,0,0.1)', height:'400px', display:'flex' , flexDirection:'column'}}>
-                            <h4 className='text-secondary'>
-                                {odabraniDatum
-                                ?`Rezervacije za ${odabraniDatum.toLocaleDateString('hr-HR')}`
-                                : "Odaberite datum"}
-                            </h4>
-                            <hr />
+                        <div className={sirina === 'sm' ? 'col-12' : 'col-md-4'}>
+                            <div style={{ background: 'white', padding: '20px', borderRadius: '15px', boxShadow: '0 4px 15px rgb(0,0,0,0.1)', height: '400px', display: 'flex', flexDirection: 'column' }}>
+                                <h4 className='text-secondary'>
+                                    {odabraniDatum
+                                        ? `Rezervacije za ${odabraniDatum.toLocaleDateString('hr-HR')}`
+                                        : "Odaberite datum"}
+                                </h4>
+                                <hr />
 
-                            {rezervacijeZaDan.length > 0 ? (
-                                <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                                    {rezervacijeZaDan.map((rezervacije, index) =>
-                                    <div key={index} className='alert alert-info mb-2' style={{ borderLeft:'5px solid #0d6efd'}}>
-                                        <p className='mb-0'>
-                                            <strong>Korisnik: </strong>
-                                            <Link
-                                            to={`/rezervacije/${rezervacije.sifra}`}
-                                            state={{ comingFrom: 'home'}}
-                                            style={{ textDecoration: 'none', color:'#0d6efd', fontWeight:'bold'}}
-                                            >
-                                                {dohvatiImeKorisnika(rezervacije.korisnik)}
-                                            </Link>
-                                            </p>
+                                {rezervacijeZaDan.length > 0 ? (
+                                    <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                                        {rezervacijeZaDan.map((rezervacije, index) =>
+                                            <div key={index} className='alert alert-info mb-2' style={{ borderLeft: '5px solid #0d6efd' }}>
+                                                <p className='mb-0'>
+                                                    <strong>Korisnik: </strong>
+                                                    <Link
+                                                        to={`/rezervacije/${rezervacije.sifra}`}
+                                                        state={{ comingFrom: 'home' }}
+                                                        style={{ textDecoration: 'none', color: '#0d6efd', fontWeight: 'bold' }}
+                                                    >
+                                                        {dohvatiImeKorisnika(rezervacije.korisnik)}
+                                                    </Link>
+                                                </p>
 
-                                        <p className='mb-0' style={{ fontSize:'0.9rem', color:'#555'}}>
-                                            <strong>Vrijeme: </strong>
-                                            {rezervacije.datum ? new Date(rezervacije.datum).toLocaleTimeString('hr-HR', {
-                                                hour: '2-digit',
-                                                minute: '2-digit'
-                                            }) : 'Nema termina'}
-                                            </p>
+                                                <p className='mb-0' style={{ fontSize: '0.9rem', color: '#555' }}>
+                                                    <strong>Vrijeme: </strong>
+                                                    {rezervacije.datum ? new Date(rezervacije.datum).toLocaleTimeString('hr-HR', {
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    }) : 'Nema termina'}
+                                                </p>
+                                            </div>
+                                        )}
                                     </div>
-                                    )}
-                                </div>
-                                ):(
+                                ) : (
                                     <div className='text-center mt-5 mb-5'>
                                         <p className='text-muted mb-4'>Nema rezervacija za ovaj dan.</p>
                                         <Link
-                                        to="/rezervacije/nove"
-                                        className='btn btn-outline-success'
-                                        state={{ comingFrom: 'home'}}
+                                            to="/rezervacije/nove"
+                                            className='btn btn-outline-success'
+                                            state={{ comingFrom: 'home' }}
                                         >
                                             Dodaj novu rezervaciju
                                         </Link>
                                     </div>
-                            )}
+                                )}
+                            </div>
                         </div>
                     </div>
-                </div>
                 </div>
 
                 <h1 className={sirina === 'sm' ? 'text-secondary text-center fs-3' : 'text-secondary'}>Harmony Massage Studio</h1>

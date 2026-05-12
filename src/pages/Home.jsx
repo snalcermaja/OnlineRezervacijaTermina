@@ -11,6 +11,7 @@ import 'react-calendar/dist/Calendar.css'
 import { Link } from 'react-router-dom'
 import useBreakpoint from '../hooks/useBreakpoint'
 import OperaterService from "../services/operateri/OperaterService"
+import { Card, Col } from 'react-bootstrap'
 
 
 
@@ -115,7 +116,7 @@ export default function Home() {
         <>
             <div className="container mt-4">
 
-                <div className="row mb-5 justify-content-center">
+                <div className="row mb-5 justify-content-center" style={{marginTop:'100px', marginBottom:'50px'}}>
                     <div className={sirina === 'sm' ? 'col-12 mb-3' : 'col-md-3'}>
                         <div className="card shadow-sm border-0 text-center bg-light" style={{ borderRadius: '15px' }}>
                             <div className="card-body">
@@ -142,6 +143,7 @@ export default function Home() {
                             </div>
                         </div>
                     </div>
+
 
                     <Col md={6} className="mb-3">
                         <Card className="shadow-lg border-0 statistikaPanel h-100">

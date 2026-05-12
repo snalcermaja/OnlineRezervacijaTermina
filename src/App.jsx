@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './App.css'
 import { Container } from 'react-bootstrap'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, Navigate } from 'react-router-dom'
 import { RouteNames } from './constants'
 import Home from './pages/Home'
 import KorisniciPregled from "./pages/korisnici/KorisniciPregled"
@@ -27,6 +27,7 @@ import Login from './pages/login/Login'
 import Registracija from './pages/registracija/Registracija'
 import NadzornaPloca from './pages/NadzornaPloca'
 import useAuth from './hooks/useAuth'
+import LoadingSpinner from './components/LoadingSpinner'
 
 function App() {
 
@@ -35,11 +36,10 @@ function App() {
   return (
     <>
       <LoadingSpinner />
-      <Container style={{ backgroundColor: window.location.hostname === 'localhost' ? '#ffefea' : 'none' }}>
+      <Container >
         <Izbornik />
         <Container className='app'>
           <Routes>
-            <Route path={RouteNames.HOME} element={<Home />} />
 
             {isLoggedIn ? (
               <>
@@ -71,13 +71,16 @@ function App() {
                   </>
                 )}
 
-                <Route path={RouteNames.APLIKACIJE_POLAZNIKA} element={<AplikacijePolaznika />} />
                 <Route path={RouteNames.TEST} element={<Test />} />
               </>
             ) : (
               <>
                 <Route path={RouteNames.LOGIN} element={<Login />} />
                 <Route path={RouteNames.REGISTRACIJA} element={<Registracija />} />
+
+                <Route path='/' element={<Navigate to={RouteNames.REGISTRACIJA} replace />} />
+
+                <Route path='*' element={<Navigate to={RouteNames.REGISTRACIJA} replace />} />
               </>
             )}
 
@@ -85,7 +88,7 @@ function App() {
           </Routes>
         </Container>
         <hr />
-        &copy; {IME_APLIKACIJE}
+        &copy; Harmony Massage Studio
       </Container></>
   )
 }

@@ -5,6 +5,7 @@ import KorisniciService from '../services/korisnici/KorisniciService';
 import UslugeService from '../services/usluge/UslugeService';
 import RezervacijaService from '../services/rezervacije/RezervacijaService';
 import { usluge } from '../services/usluge/UslugePodaci';
+import OperaterService from '../services/operateri/OperaterService';
 
 
 export default function GeneriranjePodataka() {

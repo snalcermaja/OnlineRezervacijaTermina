@@ -3,7 +3,7 @@ import RezervacijaService from "../services/rezervacije/RezervacijaService"
 import useLoading from "../hooks/useLoading"
 import { Container } from "react-bootstrap"
 import Highcharts from 'highcharts'
-import PieChart from 'highcharts-react-official'
+import {HighchartsReact} from 'highcharts-react-official'
 
 export default function NadzornaPloca() {
 
@@ -18,7 +18,7 @@ export default function NadzornaPloca() {
         const odgovor = await RezervacijaService.get()
         setPodaci(odgovor.data.map((rezervacije) => {
             return {
-                y: rezervacije.korisnici.length,
+                y: rezervacije.usluge.length,
                 name: rezervacije.naziv,
             }
         }))
@@ -37,7 +37,7 @@ export default function NadzornaPloca() {
             type: 'pie',
         },
         title: {
-            text: 'Broj polaznika po grupi',
+            text: 'Broj usluga po rezervacijij',
             align: 'left',
         },
         tooltip: {
@@ -66,7 +66,7 @@ export default function NadzornaPloca() {
         <>
             <Container className='mt-4'>
                 {podaci.length > 0 && (
-                    <PieChart
+                    <HighchartsReact
                         highcharts={Highcharts}
                         options={{
                             ...fixedOptions,

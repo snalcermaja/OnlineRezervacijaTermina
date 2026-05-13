@@ -23,6 +23,7 @@ import OperaterNovi from './pages/operateri/OperaterNovi'
 import OperaterPromjena from './pages/operateri/OperaterPromjena'
 import OperaterPromjenaLozinke from './pages/operateri/OperaterPromjenaLozinke'
 
+import Test from './pages/GeneriranjeDOCXPrimjer'
 import Login from './pages/login/Login'
 import Registracija from './pages/registracija/Registracija'
 import NadzornaPloca from './pages/NadzornaPloca'
@@ -41,11 +42,12 @@ function App() {
         <Container className='app'>
           <Routes>
 
+            <Route path={RouteNames.HOME} element={<Home />} />
+
             {isLoggedIn ? (
               <>
                 <Route path={RouteNames.NADZORNA_PLOCA} element={<NadzornaPloca />} />
 
-                <Route path={RouteNames.HOME} element={<Home />} />
                 <Route path={RouteNames.KORISNICI} element={<KorisniciPregled />} />
                 <Route path={RouteNames.KORISNICI_NOVI} element={<KorisnikNovi />} />
                 <Route path={RouteNames.KORISNICI_PROMJENA} element={<KorisnikPromjena />} />
@@ -77,10 +79,7 @@ function App() {
               <>
                 <Route path={RouteNames.LOGIN} element={<Login />} />
                 <Route path={RouteNames.REGISTRACIJA} element={<Registracija />} />
-
-                <Route path='/' element={<Navigate to={RouteNames.REGISTRACIJA} replace />} />
-
-                <Route path='*' element={<Navigate to={RouteNames.REGISTRACIJA} replace />} />
+                
               </>
             )}
 
